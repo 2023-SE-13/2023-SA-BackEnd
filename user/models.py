@@ -14,4 +14,12 @@ class User(models.Model):
 
     def __str__(self):
         return self.username
-# Create your models here.
+
+
+class Author(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=40)
+    normalized_name = models.CharField(max_length=40)
+    affiliation = models.TextField()
+    main_affiliation = models.TextField()
+    level = models.TextField()
