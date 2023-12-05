@@ -11,6 +11,7 @@ class User(models.Model):
     photo_url = models.CharField('用户头像路径', max_length=128, default='')
     # photo_url_out = models.CharField('外部用户头像路径', max_length=128, default='http://82.157.165.72:8888/photo/default.jpg')
     is_login = models.BooleanField('登录状态', default=False)
+    is_admin = models.BooleanField('是否为管理员',default=False)
 
     def __str__(self):
         return self.username
@@ -23,3 +24,9 @@ class Author(models.Model):
     affiliation = models.TextField()
     main_affiliation = models.TextField()
     level = models.TextField()
+    pub_paper_count = models.IntegerField()
+    pub_patent_count = models.IntegerField()
+    citation_count = models.IntegerField()
+    h_index = models.FloatField()
+    # 添加外键关联到User模型
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='author_profile')
