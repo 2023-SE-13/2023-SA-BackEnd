@@ -132,3 +132,19 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# 配置haystack全文检索框架
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine',
+        'URL': 'http://23.94.102.135:9200/',
+        'INDEX_NAME': 'haystack',
+    },
+}
+# 当添加、修改、删除数据时，自动更新索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+ELASTICSEARCH_DSL={
+    'default':{
+        'hosts':'23.94.102.135:9200'
+    }
+}
