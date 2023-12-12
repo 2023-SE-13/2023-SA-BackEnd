@@ -148,3 +148,13 @@ ELASTICSEARCH_DSL={
         'hosts':'116.63.49.180:9200'
     }
 }
+
+# 邮件相关配置
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # 发送邮件配置
+EMAIL_HOST = 'smtp.163.com'  # 服务器名称
+EMAIL_PORT = 25  # 服务端口
+EMAIL_HOST_USER = 'judgement9259@163.com'  # 填写自己邮箱
+EMAIL_HOST_PASSWORD = 'NNCABGNHANCKJOCK'  # 在邮箱中设置的客户端授权密码
+EMAIL_FROM = 'MSI'  # 收件人看到的发件人
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_USE_TLS = True  # 是否使用TLS安全传输协议
