@@ -5,8 +5,8 @@ from haystack.forms import SearchForm
 from .models import Paper
 from haystack.query import SearchQuerySet
 
+
 class KeywordSearchForm(SearchForm):
-    title1=""
     sorttype = forms.CharField(required=False)
     need = forms.CharField(required=False)
     formula = forms.CharField(required=False)
@@ -15,7 +15,7 @@ class KeywordSearchForm(SearchForm):
         if not self.is_valid():
             return self.no_query_found()
         formula = json.loads(self.cleaned_data['q'])
-        sorttype1 = self.cleaned_data['sorttype']
+        sorttype = self.cleaned_data['sorttype']
         need = self.cleaned_data['need']
 
         dates = formula['dates']
