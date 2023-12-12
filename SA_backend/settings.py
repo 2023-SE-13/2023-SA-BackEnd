@@ -18,7 +18,7 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-ALLOWED_HOSTS = ['23.94.102.135', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['116.63.49.180', '23.94.102.135', 'localhost', '127.0.0.1']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -28,8 +28,6 @@ SECRET_KEY = 'django-insecure-)brfm!rzq-#t0o)gw&_*^@4+#j9hw3lr)!+x7oawnply-lkl_4
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -86,7 +84,7 @@ DATABASES = {
         'NAME': os.getenv('DATABASE_NAME'),
         'USER': os.getenv('DATABASE_USER'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': '23.94.102.135',
+        'HOST': '116.63.49.180',
         'PORT': '3306',
     }
 }
@@ -137,7 +135,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine',
-        'URL': 'http://23.94.102.135:9200/',
+        'URL': 'http://116.63.49.180:9200/',
         'INDEX_NAME': 'haystack',
     },
 }
@@ -145,6 +143,6 @@ HAYSTACK_CONNECTIONS = {
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 ELASTICSEARCH_DSL={
     'default':{
-        'hosts':'23.94.102.135:9200'
+        'hosts':'116.63.49.180:9200'
     }
 }
