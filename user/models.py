@@ -20,13 +20,24 @@ class User(models.Model):
 class Author(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=40)
-    normalized_name = models.CharField(max_length=40)
-    affiliation = models.TextField()
-    main_affiliation = models.TextField()
-    level = models.TextField()
-    pub_paper_count = models.IntegerField()
-    pub_patent_count = models.IntegerField()
-    citation_count = models.IntegerField()
-    h_index = models.FloatField()
+    normalized_name = models.CharField(max_length=40,null=True)
+    affiliation = models.TextField(null=True)
+    main_affiliation = models.TextField(null=True)
+    level = models.TextField(null=True)
+    pub_paper_count = models.IntegerField(null=True)
+    pub_patent_count = models.IntegerField(null=True)
+    citation_count = models.IntegerField(null=True)
+    h_index = models.FloatField(null=True)
     # 添加外键关联到User模型
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='author_profile')
+
+class Follow(models.Model):     # 关注信息
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed_authors')
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='followers')
+
+    class Meta:
+        # 确保每个用户对每个作者的关注是唯一的
+        unique_together = ('user', 'author')
+
+    def __str__(self):
+        return f"{self.user.username} follows {self.author.name}"
