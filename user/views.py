@@ -86,7 +86,7 @@ def send_code(request):
         global email_verify
         email_verify[user_id] = email
     else:
-        result = {'result': 1, 'report': r'用户名或邮箱错误'}
+        result = {'result': 1, 'report': r'邮箱错误'}
         return JsonResponse(result)
     try:
         global code_list
@@ -98,4 +98,17 @@ def send_code(request):
         result = {'result': 1, 'report': r'发送失败'}
         return JsonResponse(result)
 
+
+def verify_code(request):
+    global code_list
+    username = request.POST.get('username')
+    user_id = User.objects.get(username=username).id
+    code_to_verify = request.POST.get('code')
+    print('name:', username, 'code:', code_list[user_id], 'code_to_verify:', code_to_verify)
+    if code_list[user_id] == code_to_verify:
+        result = {'result': 0, 'report': '验证码正确'}
+        return JsonResponse(result)
+    else:
+        result = {'result': 1, 'report': '验证码错误'}
+        return JsonResponse(result)
 
