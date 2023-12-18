@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from user.models import User, Follow, Author
+from utils.utils import send_email
 
 
 # Create your views here.
@@ -18,6 +19,7 @@ def register(request):
     user.save()
     result = {'result': 0, 'message': r'注册成功'}
     return JsonResponse(result)
+
 
 def login(request):
     username = request.POST.get('username')
@@ -39,7 +41,6 @@ def login(request):
 
 
 def follow_author(request):
-
     if request.method == 'POST':
         # 获取被关注的学者的ID
         author_id = request.POST.get('author_id')
@@ -66,3 +67,35 @@ def follow_author(request):
     else:
         result = {'result': 1, 'message': r'无效的请求'}
         return JsonResponse(result)
+
+
+username_verify = ['' for i in range(100)]
+email_verify = ['' for i in range(100)]
+code_list = [0 for i in range(100)]
+
+
+def send_code(request):
+    username = request.POST.get('username')
+    email = request.POST.get('email')
+    user_id = User.objects.get(username=username).id
+    if User.objects.filter(username=username, email=email).exists():
+        user_id = User.objects.get(username=username).id
+        # result = {'result': 0, 'report': r'确认成功'}
+        global username_verify
+        username_verify[user_id] = username
+        global email_verify
+        email_verify[user_id] = email
+    else:
+        result = {'result': 1, 'report': r'用户名或邮箱错误'}
+        return JsonResponse(result)
+    try:
+        global code_list
+        code_list[user_id] = send_email(email_verify[user_id])
+        result = {'result': 0, 'report': r'发送成功'}
+        return JsonResponse(result)
+        #return JsonResponse(result)
+    except:
+        result = {'result': 1, 'report': r'发送失败'}
+        return JsonResponse(result)
+
+

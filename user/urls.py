@@ -8,5 +8,6 @@ urlpatterns = [
     path('register', register),
     path('login', login),
     path('follow_author', follow_author),
+    path('send_code', send_code),
 
 ]
