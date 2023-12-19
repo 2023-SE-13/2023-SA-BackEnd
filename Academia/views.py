@@ -98,7 +98,8 @@ class PublisherDocumentView(DocumentViewSet):
 
 
 def MultiSearch(request):
-    search_list = request.POST.get('search_list')
+    search_list = json.loads(request.body.decode('utf-8'))
+    print(search_list)
     match_list = []
     for search_pair in search_list:
         search_content = search_pair['search_content']
@@ -113,12 +114,12 @@ def MultiSearch(request):
     body = {
         "query": {
             "bool": {
-                "must": [
-                    match_list
-                ],
+                "must": match_list
+
             }
         }
     }
+    print(body)
     res = es.search(index="paper", body=body)
     return JsonResponse(res)
 
