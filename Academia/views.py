@@ -26,6 +26,8 @@ from django_elasticsearch_dsl_drf.filter_backends import (
     OrderingFilterBackend,
 )
 
+es = Elasticsearch(hosts='elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200')
+
 
 def generate_random_data():
     url = 'http://localhost:3000/data'
@@ -95,14 +97,39 @@ class PublisherDocumentView(DocumentViewSet):
     ordering = ('id',)
 
 
+def MultiSearch(request):
+    search_list = request.POST.get('search_list')
+    match_list = []
+    for search_pair in search_list:
+        search_content = search_pair['search_content']
+        search_field = search_pair['search_field']
+        match_object = {
+            "match": {
+                search_field: search_content
+            }
+        }
+        match_list.append(match_object)
+
+    body = {
+        "query": {
+            "bool": {
+                "must": [
+                    match_list
+                ],
+            }
+        }
+    }
+    res = es.search(index="paper", body=body)
+    return JsonResponse(res)
+
+
 def MySearchView(request):
     search_msg = request.POST.get('search_msg')
     search_index = request.POST.get('search_index')
     return JsonResponse(filter_msg(search_msg, search_index))
 
 
-def filter_msg(search_msg, search_index): # 搜索diplayed_name
-    es = Elasticsearch(hosts='elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200')
+def filter_msg(search_msg, search_index):  # 搜索diplayed_name
 
     body = {
         "query": {
