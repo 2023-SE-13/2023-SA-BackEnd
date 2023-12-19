@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_elasticsearch_dsl',
     'django_elasticsearch_dsl_drf',
-
+    'rest_framework.authtoken'
 ]
 ELASTICSEARCH_DSL = {
     'default': {
@@ -100,8 +100,12 @@ DATABASES = {
     #     'PORT': '3306',
     # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'buaa_2023_sa',
+        'USER': 'root',
+        'PASSWORD': '114514',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
 
@@ -168,3 +172,5 @@ EMAIL_HOST_PASSWORD = 'NNCABGNHANCKJOCK'  # 在邮箱中设置的客户端授权
 EMAIL_FROM = 'MSI'  # 收件人看到的发件人
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_USE_TLS = True  # 是否使用TLS安全传输协议
+
+AUTH_USER_MODEL = 'user.User'
