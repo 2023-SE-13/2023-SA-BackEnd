@@ -97,9 +97,28 @@ class PublisherDocumentView(DocumentViewSet):
     ordering = ('id',)
 
 
+def BasicSearch(request):
+    search_data = json.loads(request.body.decode('utf-8'))
+    # print(search_list)
+
+    search_content = search_data.get('search_content')
+    search_field = search_data.get('search_field')
+
+    body = {
+        "query": {
+            "match": {
+                search_field: search_content
+            }
+        }
+    }
+    # print(body)
+    res = es.search(index="paper", body=body)
+    return JsonResponse(res)
+
+
 def MultiSearch(request):
     search_list = json.loads(request.body.decode('utf-8'))
-    print(search_list)
+    # print(search_list)
     match_list = []
     for search_pair in search_list:
         search_content = search_pair['search_content']
@@ -119,7 +138,7 @@ def MultiSearch(request):
             }
         }
     }
-    print(body)
+    # print(body)
     res = es.search(index="paper", body=body)
     return JsonResponse(res)
 
