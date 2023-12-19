@@ -1,10 +1,16 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 
 # Create your views here.
 from django.http import JsonResponse
 import requests
 import json
+
+from django.views import View
+from elasticsearch.client import Elasticsearch
+from rest_framework.views import APIView
+
+import SA_backend.settings
 from SA_backend.models import *
 
 from .documents import *
@@ -30,8 +36,8 @@ def generate_random_data():
     # print (payload)
     print("type of payload is: ", type(payload))
     for data in payload:
-        # print("title: ", data['title'])
-        # print("content: ", data['content'])
+        # pass
+
         Paper.objects.create(
             title=data['title'],
             keywords=data['keywords'],
@@ -63,7 +69,7 @@ def index(request):
 class PublisherDocumentView(DocumentViewSet):
     document = NewsDocument
     serializer_class = NewsDocumentSerializer
-    lookup_field = 'first_name'
+    lookup_field = 'title'
     fielddata = True
     filter_backends = [
         FilteringFilterBackend,
@@ -77,11 +83,34 @@ class PublisherDocumentView(DocumentViewSet):
     )
     multi_match_search_fields = (
         'title',
+
     )
     filter_fields = {
         'title': 'title',
+
     }
     ordering_fields = {
         'id': None,
     }
     ordering = ('id',)
+
+
+def MySearchView(request):
+    search_msg = request.POST.get('search_msg')
+    search_index = request.POST.get('search_index')
+    return JsonResponse(filter_msg(search_msg, search_index))
+
+
+def filter_msg(search_msg, search_index): # 搜索diplayed_name
+    es = Elasticsearch(hosts='elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200')
+
+    body = {
+        "query": {
+            "match": {
+                "display_name": search_msg
+            }
+        },
+        "size": 5,  # 设置最大的返回值
+    }
+    res = es.search(index=search_index, body=body)
+    return res
