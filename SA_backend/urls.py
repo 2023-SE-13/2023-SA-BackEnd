@@ -16,9 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from django.contrib import admin
+from django.urls import path
+
+from Academia.views import PublisherDocumentView,index
 
 urlpatterns = [
+    path('', index),
     path('admin/', admin.site.urls),
     path('api/user/', include(('user.urls', 'user'))),
-    path('api/academia/', include(('Academia.urls', 'Academia'))),
+    path('search/', PublisherDocumentView.as_view({'get': 'list'})),
+    # path('api/academia/', include(('Academia.urls', 'Academia'))),
 ]

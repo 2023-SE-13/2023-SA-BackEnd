@@ -21,6 +21,8 @@ class Paper(models.Model):
     abstract = models.TextField()
     last_update_time = models.DateTimeField()
     venue_id = models.IntegerField()
+    class Meta:
+        db_table = 'paper'
 
 
 class Patent(models.Model):

@@ -1,6 +1,8 @@
 import json
 
-import haystack.forms
+
+
+from forms import KeywordSearchForm
 from django.utils.html import strip_tags
 from haystack.views import SearchView
 from django.http import JsonResponse
@@ -20,9 +22,10 @@ class MyHighlighter(Highlighter):
 
 class PaperSearchView(SearchView):
     # 指定搜索结果的模板
-    form_class = haystack.forms.SearchForm
+    form_class = KeywordSearchForm
 
     def create_response(self):
+        print("======in response======")
         q = self.request.GET.get('q')
         formula = json.loads(q)
         group = formula['group']
@@ -45,40 +48,51 @@ class PaperSearchView(SearchView):
 
         # 获取查询到的结果
         context = self.get_context()
-        # paginator = context['paginator']
-        # page_obj = paginator.page(page)
+        print(len(self.results))
         object_list = context['page'].object_list
         result_list = []
         for i in object_list:
-            # 获取结果总数
-            # total = paginator.count
-            highlight = MyHighlighter(htitle)
-            i.object.title = highlight.highlight(i.object.title)
-            highlight = MyHighlighter(habstract)
-            i.object.abstract = highlight.highlight(i.object.abstract)
-            # 获取结果
-            result_dict = {}
-            result_dict['id'] = i.object.id
-            result_dict['title'] = i.object.title
-            result_dict['keywords'] = i.object.keywords
-            result_dict['citation_count'] = i.object.citation_count
-            result_dict['page_start'] = i.object.page_start
-            result_dict['page_end'] = i.object.page_end
-            result_dict['type'] = i.object.type
-            result_dict['language'] = i.object.language
-            result_dict['publisher'] = i.object.publisher
-            result_dict['volume'] = i.object.volume
-            result_dict['issue'] = i.object.issue
-            result_dict['issn'] = i.object.issn
-            result_dict['isbn'] = i.object.isbn
-            result_dict['doi'] = i.object.doi
-            result_dict['pdf_link'] = i.object.pdf_link
-            result_dict['url'] = i.object.url
-            result_dict['abstract'] = i.object.abstract
-            result_dict['last_update_time'] = i.object.last_update_time
-            result_dict['venue_id'] = i.object.venue_id
-            result_list.append(result_dict)
-
+            try:
+                # total = paginator.count
+                highlight = MyHighlighter(htitle)
+                i.object.title = highlight.highlight(i.object.title)
+                highlight = MyHighlighter(habstract)
+                i.object.abstract = highlight.highlight(i.object.abstract)
+                # 获取结果
+                paper_dict = {}
+                paper_dict['id'] = i.object.id
+                paper_dict['title'] = i.object.title
+                paper_dict['keywords'] = i.object.keywords
+                paper_dict['citation_count'] = i.object.citation_count
+                paper_dict['page_start'] = i.object.page_start
+                paper_dict['page_end'] = i.object.page_end
+                paper_dict['type'] = i.object.type
+                paper_dict['language'] = i.object.language
+                paper_dict['publisher'] = i.object.publisher
+                paper_dict['volume'] = i.object.volume
+                paper_dict['issue'] = i.object.issue
+                paper_dict['issn'] = i.object.issn
+                paper_dict['isbn'] = i.object.isbn
+                paper_dict['doi'] = i.object.doi
+                paper_dict['pdf_link'] = i.object.pdf_link
+                paper_dict['url'] = i.object.url
+                paper_dict['abstract'] = i.object.abstract
+                paper_dict['last_update_time'] = i.object.last_update_time
+                paper_dict['venue_id'] = i.object.venue_id
+                result_list.append(paper_dict)
+            except Exception:
+                print('error in for_loop')
+        print(len(result_list))
+        result_list = {}
+        result_list['num'] = len(self.results)  # math.ceil((len(self.results))/20)
+        result_list['data'] = result_list
+        # result_list['author_to_essay']=imsb1.author_to_essay
+        # result_list['key_to_essay']=imsb1.key_to_essay
+        # result_list['year_to_essay']=imsb1.year_to_essay
+        # result_list['org_to_essay']=imsb1.org_to_essay
+        return JsonResponse(result_list, safe=False)
         # 返回结果
-        return JsonResponse({'result': result_list})
 
+
+# my_text = 'This is a sample block that would be more meaningful in real life.'
+# my_query = 'block meaningful'
