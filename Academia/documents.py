@@ -16,6 +16,7 @@ PUBLISHER_INDEX.settings(
 
 @PUBLISHER_INDEX.doc_type
 class NewsDocument(Document):
+
     id = fields.IntegerField(attr='id')
     fielddata = True
     title = fields.TextField(
@@ -125,7 +126,7 @@ class NewsDocument(Document):
 
         }
     )
-    last_update_time = fields.DateField()
+
     venue_id = fields.IntegerField(attr='venue_id')
 
 
