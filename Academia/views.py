@@ -49,7 +49,6 @@ def generate_random_data():
             pdf_link=data['pdf_link'],
             url=data['url'],
             abstract=data['abstract'],
-            last_update_time=data['last_update_time'],
             venue_id=data['venue_id'],
 
         )
