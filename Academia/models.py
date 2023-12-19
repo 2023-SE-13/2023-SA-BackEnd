@@ -2,7 +2,6 @@ from django.db import models
 
 
 class Paper(models.Model):
-    id = models.CharField(max_length=40, primary_key=True)
     title = models.TextField()
     keywords = models.TextField()
     citation_count = models.IntegerField()
@@ -19,10 +18,9 @@ class Paper(models.Model):
     pdf_link = models.CharField(max_length=50)
     url = models.CharField(max_length=50)
     abstract = models.TextField()
-    last_update_time = models.DateTimeField()
+    last_update_time = models.DateTimeField(null=True)
     venue_id = models.IntegerField()
-    class Meta:
-        db_table = 'paper'
+
 
 
 class Patent(models.Model):
