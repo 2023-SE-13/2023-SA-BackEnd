@@ -22,9 +22,11 @@ from django.urls import path
 from Academia.views import PublisherDocumentView, index
 
 urlpatterns = [
-    path('', index),
-    path('search/', PublisherDocumentView.as_view({'get': 'list'})),
+    # path('', index),
+    # path('search/', PublisherDocumentView.as_view({'get': 'list'})),
     path('api/user/', include(('user.urls', 'user'))),
     path('api/Administrator/', admin.site.urls),
+    path('api/academia/', include(('Academia.urls', 'Academia'))),
+    path('admin/', admin.site.urls),
     # path('api/Academia/', include(('Academia.urls', 'Academia'))),
 ]
