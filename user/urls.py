@@ -10,5 +10,6 @@ urlpatterns = [
     path('follow_author', follow_author),
     path('send_code', send_code),
     path('verify_code', verify_code),
+    path('apply_author', apply_author),
 
 ]

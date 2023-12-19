@@ -1,8 +1,16 @@
+import os
+
 from django.contrib.auth.hashers import check_password, make_password
+from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.shortcuts import render
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
 
+from SA_backend.settings import BASE_DIR
+from message.models import MessageToAdmin
 from user.models import User, Follow, Author
 from utils.utils import send_email
 
@@ -114,3 +122,43 @@ def verify_code(request):
         result = {'result': 1, 'report': '验证码错误'}
         return JsonResponse(result)
 
+
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def apply_author(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id', '')
+        name = request.POST.get('name', '')
+        organization = request.POST.get('organization', '')
+        photo = request.FILES.get('photo')
+        user = User.objects.get(id = user_id)
+        try:
+            message = MessageToAdmin.objects.create(
+
+                title="学者申请",
+                kind="author",
+                content=f"存在用户ID: {user_id}申请认领学者，\n真实姓名: {name}\n组织: {organization}\n",
+                #send_user=request.user,
+                send_user=user,
+            )
+            if photo:
+                _, ext = os.path.splitext(photo.name)
+                avatar_path = os.path.join(BASE_DIR, 'messageToAdmin_photo', f'{message.id}_message.png')
+
+                # 保存头像文件到指定路径
+                with open(avatar_path, 'wb') as file:
+                    for chunk in photo.chunks():
+                        file.write(chunk)
+
+                # 更新用户的头像路径
+                message.photo = avatar_path
+                message.photo_out = 'http://116.63.49.180:8080/messagetoAdmin/'+f'{message.id}_message.png'
+                message.save()
+                result = {'result': 0, 'report': r'成功提交申请'}
+                return JsonResponse(result)
+            else:
+                result = {'result': 0, 'report': r'成功提交申请'}
+                return JsonResponse(result)
+        except ValidationError as e:
+            result = {'result': 1, 'report': r'提交申请失败'}
+            return JsonResponse(result)
