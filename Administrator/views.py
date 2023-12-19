@@ -50,3 +50,24 @@ def show_author_message(request):
         else:
             result = {'result': 1, 'messages': "无权限查看"}
             return JsonResponse(result)
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def show_paper_message(request):
+    if request.method == 'GET':
+        user_id = request.user.id
+        user = User.objects.get(id=user_id)
+        if user.is_admin:
+            messages = MessageToAdmin.objects.filter(kind="paper")
+            messages_list = [{
+                'id':  message.id,
+                'kind': message.kind,
+                'send_user': message.send_user.username,  # 假设你想返回发送用户的用户名
+            } for message in messages]
+            result = {'result': 0, 'messages': messages_list}
+            return JsonResponse(result)
+        else:
+            result = {'result': 1, 'messages': "无权限查看"}
+            return JsonResponse(result)
