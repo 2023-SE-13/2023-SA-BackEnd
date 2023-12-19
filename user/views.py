@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.decorators import authentication_classes, permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 
 from SA_backend.settings import BASE_DIR
@@ -103,7 +103,7 @@ def send_code(request):
         code_list[user_id] = send_email(email_verify[user_id])
         result = {'result': 0, 'report': r'发送成功'}
         return JsonResponse(result)
-        #return JsonResponse(result)
+        # return JsonResponse(result)
     except:
         result = {'result': 1, 'report': r'发送失败'}
         return JsonResponse(result)
@@ -123,6 +123,7 @@ def verify_code(request):
         return JsonResponse(result)
 
 
+@api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def apply_author(request):
@@ -131,15 +132,19 @@ def apply_author(request):
         name = request.POST.get('name', '')
         organization = request.POST.get('organization', '')
         photo = request.FILES.get('photo')
-        user = User.objects.get(id = user_id)
+        user = User.objects.get(id=user_id)
+        print(request.user)
+        print(user)
+        print(request.auth)
+        print(request.headers)
         try:
             message = MessageToAdmin.objects.create(
 
                 title="学者申请",
                 kind="author",
                 content=f"存在用户ID: {user_id}申请认领学者，\n真实姓名: {name}\n组织: {organization}\n",
-                #send_user=request.user,
-                send_user=user,
+                send_user=request.user,
+                # send_user=user,
             )
             if photo:
                 _, ext = os.path.splitext(photo.name)
@@ -152,7 +157,7 @@ def apply_author(request):
 
                 # 更新用户的头像路径
                 message.photo = avatar_path
-                message.photo_out = 'http://116.63.49.180:8080/messagetoAdmin/'+f'{message.id}_message.png'
+                message.photo_out = 'http://116.63.49.180:8080/messagetoAdmin/' + f'{message.id}_message.png'
                 message.save()
                 result = {'result': 0, 'report': r'成功提交申请'}
                 return JsonResponse(result)
@@ -161,4 +166,20 @@ def apply_author(request):
                 return JsonResponse(result)
         except ValidationError as e:
             result = {'result': 1, 'report': r'提交申请失败'}
+            return JsonResponse(result)
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def apply_admin(request):
+    if request.method == 'POST':
+        code = request.POST.get('code')
+        if code == "123456" or code == "567890":
+            request.user.is_admin = True
+            request.user.save()
+            result = {'result': 0, 'report': r'成为管理员'}
+            return JsonResponse(result)
+        else:
+            result = {'result': 1, 'report': r'认证失败'}
             return JsonResponse(result)
