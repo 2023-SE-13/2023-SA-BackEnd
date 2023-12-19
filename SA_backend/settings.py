@@ -137,15 +137,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine',
-        'URL': 'http://116.63.49.180:9200/',
+        'URL': 'http://elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200/',
         'INDEX_NAME': 'haystack',
     },
 }
 # 当添加、修改、删除数据时，自动更新索引
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
-ELASTICSEARCH_DSL={
-    'default':{
-        'hosts':'116.63.49.180:9200'
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200'
     }
 }
 
