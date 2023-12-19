@@ -30,19 +30,16 @@ def login(request):
     if not User.objects.filter(username=username):
         result = {'result': 1, 'message': r'用户名或密码错误'}
         return JsonResponse(result)
-    user = User.objects.get(username=username)
 
-    if check_password(password, user.password):
-        token, created = Token.objects.get_or_create(user=user)
-        request.session['username'] = username
+    try:
         user = User.objects.get(username=username)
-        user.is_login = True
-        user.save()
-        result = {'result': 0, 'message': r'登录成功', "token": str(token.key)}
-        return JsonResponse(result)
-    else:
-        result = {'result': 1, 'message': r'用户名或密码错误'}
-        return JsonResponse(result)
+        if check_password(password, user.password):
+            token, created = Token.objects.get_or_create(user=user)
+            return JsonResponse({'result': 0, 'message': r'登录成功', "token": str(token.key)})
+        else:
+            return JsonResponse({'result': 1, 'message': r'用户名或密码错误'})
+    except User.DoesNotExist:
+        return JsonResponse({'result': 1, 'message': r'用户名或密码错误'})
 
 
 def follow_author(request):
