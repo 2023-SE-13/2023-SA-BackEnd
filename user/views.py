@@ -1,5 +1,7 @@
+from django.contrib.auth.hashers import check_password, make_password
 from django.http import JsonResponse
 from django.shortcuts import render
+from rest_framework.authtoken.models import Token
 
 from user.models import User, Follow, Author
 from utils.utils import send_email
@@ -15,7 +17,8 @@ def register(request):
         return JsonResponse(result)
 
     email = request.POST.get('email', '')
-    user = User.objects.create(username=username, password=password, email=email)
+    hashed_password = make_password(password)
+    user = User.objects.create(username=username, password=hashed_password, email=email)
     user.save()
     result = {'result': 0, 'message': r'注册成功'}
     return JsonResponse(result)
@@ -28,12 +31,14 @@ def login(request):
         result = {'result': 1, 'message': r'用户名或密码错误'}
         return JsonResponse(result)
     user = User.objects.get(username=username)
-    if user.password == password:
+
+    if check_password(password, user.password):
+        token, created = Token.objects.get_or_create(user=user)
         request.session['username'] = username
         user = User.objects.get(username=username)
         user.is_login = True
         user.save()
-        result = {'result': 0, 'message': r'登录成功'}
+        result = {'result': 0, 'message': r'登录成功', "token": str(token.key)}
         return JsonResponse(result)
     else:
         result = {'result': 1, 'message': r'用户名或密码错误'}
