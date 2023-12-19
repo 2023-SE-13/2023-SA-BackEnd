@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
+
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -42,12 +43,21 @@ INSTALLED_APPS = [
     'user',
     'message',
     'Academia',
+    'rest_framework',
+    'django_elasticsearch_dsl',
+    'django_elasticsearch_dsl_drf',
 
 ]
-
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200'
+        # 'hosts': '127.0.0.1:9200'
+    }
+}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -81,13 +91,17 @@ WSGI_APPLICATION = 'SA_backend.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': os.getenv('DATABASE_NAME'),
+    #     'USER': os.getenv('DATABASE_USER'),
+    #     'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+    #     'HOST': '116.63.49.180',
+    #     'PORT': '3306',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': '116.63.49.180',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -133,21 +147,17 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# 配置haystack全文检索框架
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine',
-        'URL': 'http://elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200/',
-        'INDEX_NAME': 'haystack',
-    },
-}
-# 当添加、修改、删除数据时，自动更新索引
-HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
-ELASTICSEARCH_DSL = {
-    'default': {
-        'hosts': 'elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200'
-    }
-}
+# # 配置haystack全文检索框架
+# # HAYSTACK_CONNECTIONS = {
+# #     'default': {
+# #         'ENGINE': 'haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine',
+# #         'URL': 'http://elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200/',
+# #         'INDEX_NAME': 'haystack',
+# #     },
+# # }
+# # 当添加、修改、删除数据时，自动更新索引
+# HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
 
 # 邮件相关配置
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # 发送邮件配置
