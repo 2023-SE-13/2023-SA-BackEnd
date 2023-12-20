@@ -35,10 +35,10 @@ class ApplyBeAuthor(models.Model):
     send_user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='发送用户', default='')
     photo = models.CharField('消息图片路径', max_length=128, default='', null=True)
     photo_out = models.CharField('外部消息图片路径', max_length=128, default='', null=True)
-    author_id = models.CharField('学者id')
+    author_id = models.CharField('学者id',max_length=40)
 
 
 class ApplyWork(models.Model):
-    work_id = models.CharField('成果id')
+    work_id = models.CharField('成果id',max_length=40)
     send_user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='发送用户', default='')
 

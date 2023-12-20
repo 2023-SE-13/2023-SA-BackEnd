@@ -44,5 +44,5 @@ class Patent(models.Model):
 
 class Work_Data(models.Model):
     browse_times = models.IntegerField(default=0)
-    work_id = models.CharField('work_id')
-    title = models.CharField('title')
+    work_id = models.CharField('work_id',max_length=40)
+    title = models.CharField('title',max_length=40)
