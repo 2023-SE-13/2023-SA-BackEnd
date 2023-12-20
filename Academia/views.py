@@ -16,72 +16,72 @@ from .serializers import *
 es = Elasticsearch(hosts='elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200')
 
 
-def generate_random_data():
-    url = 'http://localhost:3000/data'
-    r = requests.get(url)
-    payload = json.loads(r.text)
-    count = 1
-
-    # print (payload)
-    print("type of payload is: ", type(payload))
-    for data in payload:
-        # pass
-
-        Paper.objects.create(
-            title=data['title'],
-            keywords=data['keywords'],
-            citation_count=data['citation_count'],
-            page_start=data['page_start'],
-            page_end=data['page_end'],
-            type=data['type'],
-            language=data['language'],
-            publisher=data['publisher'],
-            volume=data['volume'],
-            issue=data['issue'],
-            issn=data['issn'],
-            isbn=data['isbn'],
-            doi=data['doi'],
-            pdf_link=data['pdf_link'],
-            url=data['url'],
-            abstract=data['abstract'],
-            venue_id=data['venue_id'],
-
-        )
-
-
-def index(request):
-    generate_random_data()
-    return JsonResponse({'status': 200})
-    # return HttpResponse("Hello, the world")
+# def generate_random_data():
+#     url = 'http://localhost:3000/data'
+#     r = requests.get(url)
+#     payload = json.loads(r.text)
+#     count = 1
+#
+#     # print (payload)
+#     print("type of payload is: ", type(payload))
+#     for data in payload:
+#         # pass
+#
+#         Paper.objects.create(
+#             title=data['title'],
+#             keywords=data['keywords'],
+#             citation_count=data['citation_count'],
+#             page_start=data['page_start'],
+#             page_end=data['page_end'],
+#             type=data['type'],
+#             language=data['language'],
+#             publisher=data['publisher'],
+#             volume=data['volume'],
+#             issue=data['issue'],
+#             issn=data['issn'],
+#             isbn=data['isbn'],
+#             doi=data['doi'],
+#             pdf_link=data['pdf_link'],
+#             url=data['url'],
+#             abstract=data['abstract'],
+#             venue_id=data['venue_id'],
+#
+#         )
 
 
-class PublisherDocumentView(DocumentViewSet):
-    document = NewsDocument
-    serializer_class = NewsDocumentSerializer
-    lookup_field = 'title'
-    fielddata = True
-    filter_backends = [
-        FilteringFilterBackend,
-        OrderingFilterBackend,
-        CompoundSearchFilterBackend,
-    ]
+# def index(request):
+#     generate_random_data()
+#     return JsonResponse({'status': 200})
+#     # return HttpResponse("Hello, the world")
 
-    search_fields = (
-        'title',
 
-    )
-    multi_match_search_fields = (
-        'title',
-
-    )
-    filter_fields = {
-        'title': 'title',
-
-    }
-    ordering_fields = {
-        'id': None,
-    }
-    ordering = ('id',)
+# class PublisherDocumentView(DocumentViewSet):
+#     document = NewsDocument
+#     serializer_class = NewsDocumentSerializer
+#     lookup_field = 'title'
+#     fielddata = True
+#     filter_backends = [
+#         FilteringFilterBackend,
+#         OrderingFilterBackend,
+#         CompoundSearchFilterBackend,
+#     ]
+#
+#     search_fields = (
+#         'title',
+#
+#     )
+#     multi_match_search_fields = (
+#         'title',
+#
+#     )
+#     filter_fields = {
+#         'title': 'title',
+#
+#     }
+#     ordering_fields = {
+#         'id': None,
+#     }
+#     ordering = ('id',)
 
 
 def BasicSearch(request):
@@ -99,7 +99,7 @@ def BasicSearch(request):
         }
     }
     # print(body)
-    res = es.search(index="paper", body=body)
+    res = es.search(index="papers", body=body)
     return JsonResponse(res)
 
 
@@ -126,7 +126,7 @@ def MultiSearch(request):
         }
     }
     # print(body)
-    res = es.search(index="paper", body=body)
+    res = es.search(index="papers", body=body)
     return JsonResponse(res)
 
 
@@ -144,5 +144,5 @@ def FuzzySearch(request):
         }
     }
     # print(body)
-    res = es.search(index="paper", body=body)
+    res = es.search(index="papers", body=body)
     return JsonResponse(res)
