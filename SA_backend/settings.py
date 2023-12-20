@@ -43,19 +43,19 @@ INSTALLED_APPS = [
     'user',
     'message',
     'Academia',
-    'rest_framework',
-    'django_elasticsearch_dsl',
-    'django_elasticsearch_dsl_drf',
+    # 'rest_framework',
+    # 'django_elasticsearch_dsl',
+    # 'django_elasticsearch_dsl_drf',
     'rest_framework.authtoken',
     'Administrator',
 
 ]
-ELASTICSEARCH_DSL = {
-    'default': {
-        'hosts': 'elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200'
-        # 'hosts': '127.0.0.1:9200'
-    }
-}
+# ELASTICSEARCH_DSL = {
+#     'default': {
+#         'hosts': 'elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200'
+#         # 'hosts': '127.0.0.1:9200'
+#     }
+# }
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -91,25 +91,23 @@ WSGI_APPLICATION = 'SA_backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': '116.63.49.180',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'buaa_2023_sa',
-    #     'USER': 'root',
-    #     'PASSWORD': '114514',
-    #     'HOST': '127.0.0.1',
-    #     'PORT': '3306',
-    # }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': os.getenv('DATABASE_NAME'),
+#         'USER': os.getenv('DATABASE_USER'),
+#         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+#         'HOST': '116.63.49.180',
+#         'PORT': '3306',
+#     }
+#
+# }
 
 
 # Password validation
