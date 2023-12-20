@@ -90,17 +90,31 @@ def BasicSearch(request):
 
     search_content = search_data.get('search_content')
     search_field = search_data.get('search_field')
-
+    sort_by = search_data.get('sort_by')
+    sort_order = search_data.get('sort_order')
     body = {
         "query": {
             "match": {
                 search_field: search_content
             }
+        },
+        "sort": [
+            {
+                sort_by: {
+                    "order": sort_order
+                }
+            }
+        ],
+        "_source": {
+            "includes": ["title",
+                         "publication_date",
+                         "authorships.author.display_name"]
         }
     }
     # print(body)
     res = es.search(index="papers", body=body)
-    return JsonResponse(res)
+    res = res['hits']['hits']
+    return JsonResponse(res, safe=False)
 
 
 def MultiSearch(request):
@@ -146,3 +160,18 @@ def FuzzySearch(request):
     # print(body)
     res = es.search(index="papers", body=body)
     return JsonResponse(res)
+
+
+def GetPaperByID(request):
+
+    paper_id = request.GET.get('paper_id')
+
+    body = {
+        "query": {
+            "term": {
+                "_id": paper_id
+            }
+        }
+    }
+    res = es.search(index="papers", body=body)['hits']['hits'][0]
+    return JsonResponse(res, safe=False)
