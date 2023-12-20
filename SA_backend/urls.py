@@ -19,7 +19,6 @@ from django.urls import path, include
 from django.contrib import admin
 from django.urls import path
 
-from Academia.views import PublisherDocumentView, index
 
 urlpatterns = [
     # path('', index),
