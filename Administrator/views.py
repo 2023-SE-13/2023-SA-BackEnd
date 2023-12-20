@@ -71,3 +71,4 @@ def show_paper_message(request):
         else:
             result = {'result': 1, 'messages': "无权限查看"}
             return JsonResponse(result)
+

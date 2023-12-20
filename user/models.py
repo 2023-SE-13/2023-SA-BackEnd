@@ -13,6 +13,7 @@ class User(AbstractUser):
     # photo_url_out = models.CharField('外部用户头像路径', max_length=128, default='http://82.157.165.72:8888/photo/default.jpg')
     is_login = models.BooleanField('登录状态', default=False)
     is_admin = models.BooleanField('是否为管理员', default=False)
+    is_author = models.BooleanField('是否为学者', default=False)
     groups = models.ManyToManyField(
         'auth.Group',
         verbose_name='groups',
@@ -63,3 +64,6 @@ class Follow(models.Model):     # 关注信息
         return f"{self.user.username} follows {self.author.name}"
 
 
+class Author_User(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
+    author_id = models.CharField(max_length=40)

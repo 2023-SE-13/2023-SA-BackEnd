@@ -42,3 +42,7 @@ class Patent(models.Model):
     venue_id = models.IntegerField()
 
 
+class Work_Data(models.Model):
+    browse_times = models.IntegerField(default=0)
+    work_id = models.CharField('work_id')
+    title = models.CharField('title')

@@ -10,7 +10,7 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from SA_backend.settings import BASE_DIR
-from message.models import MessageToAdmin
+from message.models import MessageToAdmin, ApplyBeAuthor
 from user.models import User, Follow, Author
 from utils.utils import send_email
 
@@ -128,22 +128,22 @@ def verify_code(request):
 @permission_classes([IsAuthenticated])
 def apply_author(request):
     if request.method == 'POST':
-        user_id = request.POST.get('user_id', '')
+        author_id = request.POST.get('author_id', '')
         name = request.POST.get('name', '')
-        organization = request.POST.get('organization', '')
+        content = request.POST.get('content', '')
         photo = request.FILES.get('photo')
-        user = User.objects.get(id=user_id)
+
         print(request.user)
-        print(user)
         print(request.auth)
         print(request.headers)
         try:
-            message = MessageToAdmin.objects.create(
+            message = ApplyBeAuthor.objects.create(
 
                 title="学者申请",
-                kind="author",
-                content=f"存在用户ID: {user_id}申请认领学者，\n真实姓名: {name}\n组织: {organization}\n",
+                name=name,
+                content=content,
                 send_user=request.user,
+                author_id=author_id,
                 # send_user=user,
             )
             if photo:
