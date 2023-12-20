@@ -143,21 +143,19 @@ def MultiSearch(request):
     return JsonResponse(res)
 
 
-def MySearchView(request):
-    search_msg = request.POST.get('search_msg')
-    search_index = request.POST.get('search_index')
-    return JsonResponse(filter_msg(search_msg, search_index))
+def FuzzySearch(request):
+    search_data = json.loads(request.body.decode('utf-8'))
+    # print(search_list)
 
-
-def filter_msg(search_msg, search_index):  # 搜索diplayed_name
-
+    search_content = search_data.get('search_content')
+    search_field = search_data.get('search_field')
     body = {
         "query": {
-            "match": {
-                "display_name": search_msg
+            "fuzzy": {
+                search_field: search_content
             }
-        },
-        "size": 5,  # 设置最大的返回值
+        }
     }
-    res = es.search(index=search_index, body=body)
-    return res
+    # print(body)
+    res = es.search(index="paper", body=body)
+    return JsonResponse(res)
