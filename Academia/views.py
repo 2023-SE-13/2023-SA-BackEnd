@@ -1,30 +1,17 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpRequest
-
 # Create your views here.
-from django.http import JsonResponse
 import requests
-import json
-
-from django.views import View
-from elasticsearch.client import Elasticsearch
-from rest_framework.views import APIView
-
-import SA_backend.settings
-from SA_backend.models import *
-
-from .documents import *
-from .serializers import *
-
+from django.http import JsonResponse
 from django_elasticsearch_dsl_drf.filter_backends import (
-    FilteringFilterBackend,
     CompoundSearchFilterBackend
 )
-from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
 from django_elasticsearch_dsl_drf.filter_backends import (
     FilteringFilterBackend,
     OrderingFilterBackend,
 )
+from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
+from elasticsearch.client import Elasticsearch
+
+from .serializers import *
 
 es = Elasticsearch(hosts='elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200')
 
