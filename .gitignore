@@ -358,3 +358,5 @@ cython_debug/
 migrations/
 
 messageToAdmin_photo/
+
+db.sqlite3
