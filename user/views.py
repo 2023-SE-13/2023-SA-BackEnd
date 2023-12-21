@@ -49,27 +49,24 @@ def login(request):
     except User.DoesNotExist:
         return JsonResponse({'result': 1, 'message': r'用户名或密码错误'})
 
-
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def follow_author(request):
     if request.method == 'POST':
         # 获取被关注的学者的ID
         author_id = request.POST.get('author_id')
-        user_id = request.POST.get('user_id')
+        user_id = request.user.id
+        author_name = request.POST.get('user_id')
 
-        try:
-            author = Author.objects.get(id=author_id)
-            user = User.objects.get(id=user_id)
-        except Author.DoesNotExist:
-            result = {'result': 1, 'message': r'学者不存在'}
-            return JsonResponse(result)
 
         # 检查用户是否已经关注了该学者
-        if Follow.objects.filter(user=user, author=author).exists():
+        if Follow.objects.filter(user=request.user, author_id=author_id).exists():
             result = {'result': 1, 'message': r'您已经关注了该学者'}
             return JsonResponse(result)
 
         # 创建关注关系
-        follow = Follow(user=user, author=author)
+        follow = Follow(user=request.user, author_id=author_id,author_name=author_name)
         follow.save()
 
         result = {'result': 0, 'message': r'关注成功'}
