@@ -283,14 +283,16 @@ def GetPaperByID(request):
             }
         }
     }
-    res = es.search(index="works", body=body)['hits']['hits'][0]
-    title = res.get('_source').get('title')
-    if Work_Data.objects.filter(work_id=paper_id).exists():
-        work_data = Work_Data.objects.get(work_id=paper_id)
-        work_data.browse_times += 1
-        work_data.save()
-    else:
-        Work_Data.objects.create(work_id=paper_id, title=title, browse_times=1)
+    res = es.search(index="works", body=body)['hits']['hits']
+    if res:
+        res = res[0]
+        title = res.get('_source').get('title')
+        if Work_Data.objects.filter(work_id=paper_id).exists():
+            work_data = Work_Data.objects.get(work_id=paper_id)
+            work_data.browse_times += 1
+            work_data.save()
+        else:
+            Work_Data.objects.create(work_id=paper_id, title=title, browse_times=1)
     return JsonResponse(res, safe=False)
 
 
@@ -316,7 +318,7 @@ def favorite_paper(request):
     else:
         result = {'result': 1, 'message': r'无效的请求'}
         return JsonResponse(result)
-
+# https://api.openalex.org/works/W2730267575
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
