@@ -10,6 +10,9 @@ from django_elasticsearch_dsl_drf.filter_backends import (
 )
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
 from elasticsearch.client import Elasticsearch
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated
 
 from .serializers import *
 
@@ -212,3 +215,5 @@ def GetPaperByID(request):
     }
     res = es.search(index="papers", body=body)['hits']['hits'][0]
     return JsonResponse(res, safe=False)
+
+

@@ -1,5 +1,7 @@
 from django.db import models
 
+from user.models import User
+
 
 class Paper(models.Model):
     title = models.TextField()
@@ -51,3 +53,9 @@ class Work_Data(models.Model):
 class Work_Author(models.Model):
     author_id = models.CharField('author_id', max_length=40)
     work_id = models.CharField('work_id', max_length=40)
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    article_name = models.CharField( max_length=40)
+    article_id = models.CharField(max_length=40)

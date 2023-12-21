@@ -54,11 +54,10 @@ class Author(models.Model):
 
 class Follow(models.Model):     # 关注信息
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed_authors')
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='followers')
+    #author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='followers')
+    author_id = models.CharField(max_length=40,default='')
+    author_name = models.CharField(max_length=40,default='')
 
-    class Meta:
-        # 确保每个用户对每个作者的关注是唯一的
-        unique_together = ('user', 'author')
 
     def __str__(self):
         return f"{self.user.username} follows {self.author.name}"
