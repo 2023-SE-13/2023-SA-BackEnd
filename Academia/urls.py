@@ -8,6 +8,7 @@ urlpatterns = [
     path('basicsearch', BasicSearch),
     path('multisearch', MultiSearch),
     path('fuzzysearch', FuzzySearch),
+    path('authorsearch', AuthorSearch),
     path('get_paper', GetPaperByID),
 
 ]
