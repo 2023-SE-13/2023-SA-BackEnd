@@ -58,7 +58,7 @@ def BasicSearch(request):
 
         }
     # print(body)
-    res = es.search(index="papers", body=body)
+    res = es.search(index="works", body=body)
     res = res['hits']
     return JsonResponse(res, safe=False)
 
@@ -114,7 +114,7 @@ def MultiSearch(request):
             }
         }
     # print(body)
-    res = es.search(index="papers", body=body)
+    res = es.search(index="works", body=body)
     res = res['hits']
     return JsonResponse(res, safe=False)
 
@@ -160,7 +160,7 @@ def FuzzySearch(request):
             }
         }
     # print(body)
-    res = es.search(index="papers", body=body)
+    res = es.search(index="works", body=body)
     res = res['hits']
     return JsonResponse(res, safe=False)
 
@@ -227,7 +227,7 @@ def GetPaperByID(request):
             }
         }
     }
-    res = es.search(index="papers", body=body)['hits']['hits'][0]
+    res = es.search(index="works", body=body)['hits']['hits'][0]
     title = res.get('_source').get('title')
     if Work_Data.objects.filter(work_id=paper_id).exists():
         work_data = Work_Data.objects.get(work_id=paper_id)
