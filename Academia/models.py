@@ -46,3 +46,8 @@ class Work_Data(models.Model):
     browse_times = models.IntegerField(default=0)
     work_id = models.CharField('work_id',max_length=40)
     title = models.CharField('title',max_length=40)
+
+
+class Work_Author(models.Model):
+    author_id = models.CharField('author_id', max_length=40)
+    work_id = models.CharField('work_id', max_length=40)

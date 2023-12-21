@@ -10,7 +10,7 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from SA_backend.settings import BASE_DIR
-from message.models import MessageToAdmin, ApplyBeAuthor
+from message.models import ApplyBeAuthor, ApplyWork, ReplyToUser
 from user.models import User, Follow, Author
 from utils.utils import send_email
 
@@ -133,9 +133,6 @@ def apply_author(request):
         content = request.POST.get('content', '')
         photo = request.FILES.get('photo')
 
-        print(request.user)
-        print(request.auth)
-        print(request.headers)
         try:
             message = ApplyBeAuthor.objects.create(
 
@@ -182,4 +179,38 @@ def apply_admin(request):
             return JsonResponse(result)
         else:
             result = {'result': 1, 'report': r'认证失败'}
+            return JsonResponse(result)
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def apply_work(request):
+    if request.method == 'POST':
+        work_id= request.POST.get('work_id', '')
+        if request.user.is_author:
+                message = ApplyWork.objects.create(
+
+                    send_user=request.user,
+                    work_id=work_id,
+                    # send_user=user,
+                )
+                result = {'result': 0, 'report': r'成功提交申请'}
+                return JsonResponse(result)
+        else:
+                result = {'result': 1, 'report': r'不是学者，没有申请资格'}
+                return JsonResponse(result)
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_apply_results(request):
+    if request.method == 'GET':
+            messages = ReplyToUser.objects.filter(receive_user=request.user)
+            messages_list = [{
+                'title': message.title,
+                'content': message.content,
+            } for message in messages]
+            result = {'result': 0, 'messages': messages_list}
             return JsonResponse(result)
