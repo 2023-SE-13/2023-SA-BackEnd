@@ -14,5 +14,6 @@ urlpatterns = [
     path('apply_admin',apply_admin),
     path('apply_work',apply_work),
     path('get_apply_results',get_apply_results),
+    path('show_follow_author', show_follow_author),
 
 ]

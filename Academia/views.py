@@ -14,6 +14,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 
+from .models import Favorite
 from .serializers import *
 
 es = Elasticsearch(hosts='elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200')
@@ -217,3 +218,39 @@ def GetPaperByID(request):
     return JsonResponse(res, safe=False)
 
 
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def favorite_paper(request):
+    if request.method == 'POST':
+        # 获取被关注的学者的ID
+        paper_id = request.POST.get('paper_id')
+        paper_name = request.POST.get('paper_name')
+
+        # 检查用户是否已经收藏了该文章
+        if Favorite.objects.filter(user=request.user, article_id = paper_id).exists():
+            result = {'result': 1, 'message': r'您已经收藏了该文章'}
+            return JsonResponse(result)
+
+        # 创建关注关系
+
+        Favorite.objects.create(user=request.user,article_id=paper_id,article_name=paper_name)
+        result = {'result': 0, 'message': r'收藏成功'}
+        return JsonResponse(result)
+    else:
+        result = {'result': 1, 'message': r'无效的请求'}
+        return JsonResponse(result)
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def show_favorites(request):
+    if request.method == 'GET':
+            messages = Favorite.objects.filter(user=request.user)
+            messages_list = [{
+                'paper_id': message.article_id,
+                'paper_name': message.article_name,
+            } for message in messages]
+            result = {'result': 0, 'messages': messages_list}
+            return JsonResponse(result)

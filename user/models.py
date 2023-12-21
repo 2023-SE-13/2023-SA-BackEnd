@@ -55,8 +55,8 @@ class Author(models.Model):
 class Follow(models.Model):     # 关注信息
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed_authors')
     #author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='followers')
-    author_id = models.CharField(max_length=40,default='')
-    author_name = models.CharField(max_length=40,default='')
+    author_id = models.CharField(max_length=40, default='')
+    author_name = models.CharField(max_length=40, default='')
 
 
     def __str__(self):

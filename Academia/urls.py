@@ -9,5 +9,6 @@ urlpatterns = [
     path('multisearch', MultiSearch),
     path('fuzzysearch', FuzzySearch),
     path('get_paper', GetPaperByID),
-
+    path('favorite_paper', favorite_paper),
+    path('show_favorites', show_favorites),
 ]

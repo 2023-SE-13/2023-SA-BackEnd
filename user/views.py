@@ -57,7 +57,7 @@ def follow_author(request):
         # 获取被关注的学者的ID
         author_id = request.POST.get('author_id')
         user_id = request.user.id
-        author_name = request.POST.get('user_id')
+        author_name = request.POST.get('author_name')
 
 
         # 检查用户是否已经关注了该学者
@@ -208,6 +208,20 @@ def get_apply_results(request):
             messages_list = [{
                 'title': message.title,
                 'content': message.content,
+            } for message in messages]
+            result = {'result': 0, 'messages': messages_list}
+            return JsonResponse(result)
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def show_follow_author(request):
+    if request.method == 'GET':
+            messages = Follow.objects.filter(user=request.user)
+            messages_list = [{
+                'author_id': message.author_id,
+                'author_name': message.author_name,
             } for message in messages]
             result = {'result': 0, 'messages': messages_list}
             return JsonResponse(result)
