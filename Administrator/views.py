@@ -132,3 +132,29 @@ def handle_paper_message(request):
         else:
             result = {'result': 1, 'messages': "无权限查看"}
             return JsonResponse(result)
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_specific_author_apply(request):
+    if request.method == 'POST':
+        message_id = request.POST.get('message_id')
+        user = request.user
+        if user.is_admin:
+            message = ApplyBeAuthor.objects.get(id=message_id)
+            message = {
+                'title': message.title,
+                'author_id': message.author_id,
+                'true_name': message.name,
+                'content': message.content,
+                'photo_url':message.photo,
+                'photo_url_out':message.photo_out,
+                'username': message.send_user.username,
+
+            }
+            result = {'result': 0, 'message': message}
+            return JsonResponse(result)
+        else:
+            result = {'result': 1, 'messages': "无权限查看"}
+            return JsonResponse(result)
