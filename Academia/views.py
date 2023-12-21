@@ -4,7 +4,7 @@ from elasticsearch.client import Elasticsearch
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
-
+from models import *
 from .models import Favorite
 from .serializers import *
 
@@ -228,6 +228,13 @@ def GetPaperByID(request):
         }
     }
     res = es.search(index="papers", body=body)['hits']['hits'][0]
+    title = res.get('_source').get('title')
+    if Work_Data.objects.filter(work_id=paper_id).exists():
+        work_data = Work_Data.objects.get(work_id=paper_id)
+        work_data.browse_times += 1
+        work_data.save()
+    else:
+        Work_Data.objects.create(work_id=paper_id, title=title, browse_times=1)
     return JsonResponse(res, safe=False)
 
 
