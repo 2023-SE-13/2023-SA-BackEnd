@@ -4,7 +4,7 @@ from elasticsearch.client import Elasticsearch
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
-from models import *
+from .models import *
 from .models import Favorite
 from .serializers import *
 
@@ -41,7 +41,13 @@ def BasicSearch(request):
             "_source": {
                 "includes": includes
             },
-
+            "highlight": {
+                "fields": {
+                    search_field: {}
+                },
+                "pre_tags": "<font color='red'>",
+                "post_tags": "</font>",
+            }
         }
     else:
         body = {
@@ -55,6 +61,13 @@ def BasicSearch(request):
             "_source": {
                 "includes": includes
             },
+            "highlight": {
+                "fields": {
+                  search_field: {}
+                },
+                "pre_tags": "<font color='red'>",
+                "post_tags": "</font>",
+            }
 
         }
     # print(body)
@@ -73,6 +86,7 @@ def MultiSearch(request):
                 "authorships.author.display_name"]
     # print(search_list)
     match_list = []
+    highlighy_list = []
     for search_pair in search_list:
         search_content = search_pair['search_content']
         search_field = search_pair['search_field']
@@ -81,7 +95,11 @@ def MultiSearch(request):
                 search_field: search_content
             }
         }
+        highlighy_object = {
+            search_field: {}
+        }
         match_list.append(match_object)
+        highlighy_list.append(highlighy_object)
     if sort_by != "":
         body = {
             "query": {
@@ -99,6 +117,11 @@ def MultiSearch(request):
             ],
             "_source": {
                 "includes": includes
+            },
+            "highlight": {
+                "fields": highlighy_list,
+                "pre_tags": "<font color='red'>",
+                "post_tags": "</font>",
             }
         }
     else:
@@ -111,6 +134,11 @@ def MultiSearch(request):
             },
             "_source": {
                 "includes": includes
+            },
+            "highlight": {
+                "fields": highlighy_list,
+                "pre_tags": "<font color='red'>",
+                "post_tags": "</font>",
             }
         }
     # print(body)
@@ -146,6 +174,13 @@ def FuzzySearch(request):
             ],
             "_source": {
                 "includes": includes
+            },
+            "highlight": {
+                "fields": {
+                    search_field: {}
+                },
+                "pre_tags": "<font color='red'>",
+                "post_tags": "</font>",
             }
         }
     else:
@@ -157,6 +192,13 @@ def FuzzySearch(request):
             },
             "_source": {
                 "includes": includes
+            },
+            "highlight": {
+                "fields": {
+                    search_field: {}
+                },
+                "pre_tags": "<font color='red'>",
+                "post_tags": "</font>",
             }
         }
     # print(body)
@@ -195,6 +237,13 @@ def AuthorSearch(request):
             "_source": {
                 "includes": includes
             },
+            "highlight": {
+                "fields": {
+                    search_field: {}
+                },
+                "pre_tags": "<font color='red'>",
+                "post_tags": "</font>",
+            }
 
         }
     else:
@@ -209,6 +258,13 @@ def AuthorSearch(request):
             "_source": {
                 "includes": includes
             },
+            "highlight": {
+                "fields": {
+                    search_field: {}
+                },
+                "pre_tags": "<font color='red'>",
+                "post_tags": "</font>",
+            }
 
         }
     # print(body)
