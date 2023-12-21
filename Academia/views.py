@@ -87,17 +87,23 @@ es = Elasticsearch(hosts='elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200')
 def BasicSearch(request):
     search_data = json.loads(request.body.decode('utf-8'))
     # print(search_list)
-
+    # page = search_data.get('page')
+    # size = 20
     search_content = search_data.get('search_content')
     search_field = search_data.get('search_field')
     sort_by = search_data.get('sort_by')
     sort_order = search_data.get('sort_order')
+    includes = ["title",
+                "publication_date",
+                "authorships.author.display_name"]
     body = {
         "query": {
             "match": {
                 search_field: search_content
             }
         },
+        # "from": (page - 1) * size,
+        # "size": size,
         "sort": [
             {
                 sort_by: {
@@ -106,10 +112,9 @@ def BasicSearch(request):
             }
         ],
         "_source": {
-            "includes": ["title",
-                         "publication_date",
-                         "authorships.author.display_name"]
-        }
+            "includes": includes
+        },
+
     }
     # print(body)
     res = es.search(index="papers", body=body)
@@ -118,7 +123,13 @@ def BasicSearch(request):
 
 
 def MultiSearch(request):
-    search_list = json.loads(request.body.decode('utf-8'))
+    search_data = json.loads(request.body.decode('utf-8'))
+    sort_by = search_data.get('sort_by')
+    sort_order = search_data.get('sort_order')
+    search_list = search_data.get('search_list')
+    includes = ["title",
+                "publication_date",
+                "authorships.author.display_name"]
     # print(search_list)
     match_list = []
     for search_pair in search_list:
@@ -137,6 +148,16 @@ def MultiSearch(request):
                 "must": match_list
 
             }
+        },
+        "sort": [
+            {
+                sort_by: {
+                    "order": sort_order
+                }
+            }
+        ],
+        "_source": {
+            "includes": includes
         }
     }
     # print(body)
@@ -150,16 +171,32 @@ def FuzzySearch(request):
 
     search_content = search_data.get('search_content')
     search_field = search_data.get('search_field')
+    sort_by = search_data.get('sort_by')
+    sort_order = search_data.get('sort_order')
+    includes = ["title",
+                "publication_date",
+                "authorships.author.display_name"]
     body = {
         "query": {
             "fuzzy": {
                 search_field: search_content
             }
+        },
+        "sort": [
+            {
+                sort_by: {
+                    "order": sort_order
+                }
+            }
+        ],
+        "_source": {
+            "includes": includes
         }
     }
     # print(body)
     res = es.search(index="papers", body=body)
-    return JsonResponse(res)
+    res = res['hits']['hits']
+    return JsonResponse(res, safe=False)
 
 
 def GetPaperByID(request):

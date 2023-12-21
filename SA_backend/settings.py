@@ -98,13 +98,15 @@ WSGI_APPLICATION = 'SA_backend.wsgi.application'
 #    }
 #}
 DATABASES = {
-   'default': {
-        'ENGINE': 'django.db.backends.mysql',
-     'NAME': os.getenv('DATABASE_NAME'),
+
+    'default': {
+        'ENGINE': os.getenv('DATABASE_ENGINE'),
+        'NAME': os.getenv('DATABASE_NAME'),
         'USER': os.getenv('DATABASE_USER'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': '116.63.49.180',
-        'PORT': '3306', }
+        'HOST': os.getenv('DATABASE_HOST'),
+        'PORT': os.getenv('DATABASE_PORT'),
+    }
 }
 
 
