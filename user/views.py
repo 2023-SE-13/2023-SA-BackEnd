@@ -225,3 +225,28 @@ def show_follow_author(request):
             } for message in messages]
             result = {'result': 0, 'messages': messages_list}
             return JsonResponse(result)
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def upload_avatar(request):
+    user = request.user
+    avatar = request.FILES.get('avatar')
+
+    if avatar:  # 如果上传了头像文件
+        # 生成头像文件的保存路径
+        _, ext = os.path.splitext(avatar.name)
+        avatar_path = os.path.join(BASE_DIR, 'avatar', f'{user.id}_avatar.png')
+
+        # 保存头像文件到指定路径
+        with open(avatar_path, 'wb') as file:
+            for chunk in avatar.chunks():
+                file.write(chunk)
+
+        # 更新用户的头像路径
+        user.photo_url = avatar_path
+        user.photo_url_out = 'http://116.63.49.180:8080/avatar/' + f'{user.id}_avatar.png'
+        user.save()
+        result = {'result': 0, 'report': r'上传成功'}
+        return JsonResponse(result)
