@@ -1,12 +1,12 @@
 # Create your views here.
+import json
+
 from django.http import JsonResponse
 from elasticsearch.client import Elasticsearch
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from .models import *
-from .models import Favorite
-from .serializers import *
 
 es = Elasticsearch(hosts='elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200')
 
