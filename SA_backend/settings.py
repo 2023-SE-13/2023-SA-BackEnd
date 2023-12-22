@@ -43,10 +43,12 @@ INSTALLED_APPS = [
     'user',
     'message',
     'Academia',
-    'rest_framework',
+    # 'rest_framework',
+    # 'django_elasticsearch_dsl',
+    # 'django_elasticsearch_dsl_drf',
     'rest_framework.authtoken',
     'Administrator',
-
+    'Browhistory',
 ]
 
 MIDDLEWARE = [
