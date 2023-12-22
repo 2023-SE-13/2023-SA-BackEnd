@@ -9,6 +9,47 @@ from rest_framework.permissions import IsAuthenticated
 from .models import *
 
 es = Elasticsearch(hosts='elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200')
+sample_abstract_inverted_index = {
+    "Despite": [
+        0
+    ],
+    "growing": [
+        1
+    ],
+    "interest": [
+        2
+    ],
+    "in": [
+        3,
+        4,
+        6,
+    ],
+    "Open": [
+        5,
+        7
+    ]
+}
+
+
+def reconstruct_text(inverted_index):
+    words = list(inverted_index.keys())  # 获取所有单词
+    max_position = max(max(positions) for positions in inverted_index.values())  # 获取最大位置值
+
+    # 初始化一个位置列表，用于构建文本
+    text_positions = [None] * (max_position + 1)
+
+    # 遍历反向索引
+    for word, positions in inverted_index.items():
+        for position in positions:
+            text_positions[position] = word  # 将单词放置到对应的位置
+
+    # 根据位置列表构建原始文本
+    reconstructed_txt = ' '.join(text_positions)
+    return reconstructed_txt
+
+
+reconstructed_text = reconstruct_text(sample_abstract_inverted_index)
+print(reconstructed_text)
 
 
 def BasicSearch(request):
@@ -63,7 +104,7 @@ def BasicSearch(request):
             },
             "highlight": {
                 "fields": {
-                  search_field: {}
+                    search_field: {}
                 },
                 "pre_tags": "<font color='red'>",
                 "post_tags": "</font>",
@@ -71,8 +112,10 @@ def BasicSearch(request):
 
         }
     # print(body)
-    res = es.search(index="works", body=body)
+    res = es.search(index="works", body=body, size=1000)
     res = res['hits']
+    for hit in res['hits']:
+        hit['_source']['abstract'] = reconstruct_text(sample_abstract_inverted_index)
     return JsonResponse(res, safe=False)
 
 
@@ -142,7 +185,7 @@ def MultiSearch(request):
             }
         }
     # print(body)
-    res = es.search(index="works", body=body)
+    res = es.search(index="works", body=body, size=1000)
     res = res['hits']
     return JsonResponse(res, safe=False)
 
@@ -202,8 +245,9 @@ def FuzzySearch(request):
             }
         }
     # print(body)
-    res = es.search(index="works", body=body)
+    res = es.search(index="works", body=body, size=1000)
     res = res['hits']
+
     return JsonResponse(res, safe=False)
 
 
@@ -225,8 +269,6 @@ def AuthorSearch(request):
                     search_field: search_content
                 }
             },
-            # "from": (page - 1) * size,
-            # "size": size,
             "sort": [
                 {
                     sort_by: {
@@ -268,8 +310,9 @@ def AuthorSearch(request):
 
         }
     # print(body)
-    res = es.search(index="authors", body=body)
+    res = es.search(index="authors", body=body, size=1000)
     res = res['hits']
+
     return JsonResponse(res, safe=False)
 
 
@@ -291,8 +334,10 @@ def GetPaperByID(request):
             work_data = Work_Data.objects.get(work_id=paper_id)
             work_data.browse_times += 1
             work_data.save()
+            res['_source']['abstract'] = reconstruct_text(sample_abstract_inverted_index)
         else:
             Work_Data.objects.create(work_id=paper_id, title=title, browse_times=1)
+
     return JsonResponse(res, safe=False)
 
 
@@ -306,18 +351,20 @@ def favorite_paper(request):
         paper_name = request.POST.get('paper_name')
 
         # 检查用户是否已经收藏了该文章
-        if Favorite.objects.filter(user=request.user, article_id = paper_id).exists():
+        if Favorite.objects.filter(user=request.user, article_id=paper_id).exists():
             result = {'result': 1, 'message': r'您已经收藏了该文章'}
             return JsonResponse(result)
 
         # 创建关注关系
 
-        Favorite.objects.create(user=request.user,article_id=paper_id,article_name=paper_name)
+        Favorite.objects.create(user=request.user, article_id=paper_id, article_name=paper_name)
         result = {'result': 0, 'message': r'收藏成功'}
         return JsonResponse(result)
     else:
         result = {'result': 1, 'message': r'无效的请求'}
         return JsonResponse(result)
+
+
 # https://api.openalex.org/works/W2730267575
 
 @api_view(['GET'])
@@ -325,10 +372,10 @@ def favorite_paper(request):
 @permission_classes([IsAuthenticated])
 def show_favorites(request):
     if request.method == 'GET':
-            messages = Favorite.objects.filter(user=request.user)
-            messages_list = [{
-                'paper_id': message.article_id,
-                'paper_name': message.article_name,
-            } for message in messages]
-            result = {'result': 0, 'messages': messages_list}
-            return JsonResponse(result)
+        messages = Favorite.objects.filter(user=request.user)
+        messages_list = [{
+            'paper_id': message.article_id,
+            'paper_name': message.article_name,
+        } for message in messages]
+        result = {'result': 0, 'messages': messages_list}
+        return JsonResponse(result)
