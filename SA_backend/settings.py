@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'user',
     'message',
     'Academia',
+    'Browhistory',
     # 'rest_framework',
     # 'django_elasticsearch_dsl',
     # 'django_elasticsearch_dsl_drf',
