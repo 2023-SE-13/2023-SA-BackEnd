@@ -50,8 +50,6 @@ def reconstruct_text(inverted_index):
     return reconstructed_txt
 
 
-
-
 def BasicSearch(request):
     search_data = json.loads(request.body.decode('utf-8'))
     # page = search_data.get('page')
@@ -314,7 +312,7 @@ def FuzzySearch(request):
             if index != -1:
                 field_left = search_field[:index]
                 field_right = search_field[index + 1:]
-            
+
             body = {
                 "query": {
                     "bool": {
@@ -356,7 +354,7 @@ def FuzzySearch(request):
                 }
             }
         else:
-            
+
             body = {
                 "query": {
                     "match": {
@@ -392,7 +390,7 @@ def FuzzySearch(request):
             if index != -1:
                 field_left = search_field[:index]
                 field_right = search_field[index + 1:]
-            
+
             body = {
                 "query": {
                     "bool": {
@@ -416,7 +414,7 @@ def FuzzySearch(request):
                 }
             }
         else:
-            
+
             print(search_field)
             body = {
                 "query": {
@@ -595,6 +593,7 @@ def GetPaperByID(request):
         }
     }
     res = es.search(index="works", body=body)['hits']['hits']
+
     if res:
         res = res[0]
         title = res.get('_source').get('title')
@@ -604,6 +603,40 @@ def GetPaperByID(request):
             work_data.save()
         else:
             Work_Data.objects.create(work_id=paper_id, title=title, browse_times=1)
+        related_works = res['_source']['related_works']
+        res['_source']['related_works'] = []
+        print(res['_source']['related_works'])
+        print(related_works)
+        if related_works:
+            # print(related_works)
+            i = 0
+            for related_work in related_works:
+                body2 = {
+                    "query": {
+                        "term": {
+                            "_id": related_work
+                        }
+                    },
+                    "_source": {
+                        "includes": ["title", "authorships.author.display_name"]
+                    }
+                }
+                # print(body2)
+                res2 = es.search(index="works", body=body2)['hits']['hits']
+                # print(res2)
+                if res2:
+                    res2 = res2[0]
+                    related_id = res2['_id']
+                    related_title = res2['_source']['title']
+                    related_authorships = res2['_source']['authorships']
+                    obj = {
+                        "id": related_id,
+                        "title": related_title,
+                        "authorships": related_authorships
+                    }
+                    res['_source']['related_works'].append(obj)
+
+                    i = i + 1
 
     return JsonResponse(res, safe=False)
 
