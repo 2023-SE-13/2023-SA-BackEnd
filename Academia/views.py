@@ -312,6 +312,7 @@ def FuzzySearch(request):
             if index != -1:
                 field_left = search_field[:index]
                 field_right = search_field[index + 1:]
+            search_field += ".keyword"
             body = {
                 "query": {
                     "bool": {
@@ -350,6 +351,7 @@ def FuzzySearch(request):
                 }
             }
         else:
+            search_field += ".keyword"
             body = {
                 "query": {
                     "fuzzy": {
@@ -382,6 +384,7 @@ def FuzzySearch(request):
             if index != -1:
                 field_left = search_field[:index]
                 field_right = search_field[index + 1:]
+            search_field += ".keyword"
             body = {
                 "query": {
                     "bool": {
@@ -402,6 +405,8 @@ def FuzzySearch(request):
                 }
             }
         else:
+            search_field += ".keyword"
+            print(search_field)
             body = {
                 "query": {
                     "fuzzy": {
@@ -419,7 +424,7 @@ def FuzzySearch(request):
                     "post_tags": "</font>",
                 }
             }
-    # print(body)
+    print(body)
     res = es.search(index="works", body=body, size=1000)
     res = res['hits']
 
@@ -436,6 +441,7 @@ def AuthorSearch(request):
     sort_order = search_data.get('sort_order')
     includes = ["display_name",
                 "cited_by_count",
+                "works_count",
                 "last_known_institution.display_name"]
     if sort_by != "":
         body = {
@@ -497,10 +503,12 @@ def AuthorFuzzySearch(request):
     # size = 20
     search_content = search_data.get('search_content')
     search_field = search_data.get('search_field')
+    search_field += ".keyword"
     sort_by = search_data.get('sort_by')
     sort_order = search_data.get('sort_order')
     includes = ["display_name",
                 "cited_by_count",
+                "works_count",
                 "last_known_institution.display_name"]
     if sort_by != "":
         body = {
@@ -549,7 +557,7 @@ def AuthorFuzzySearch(request):
             }
 
         }
-    print(body)
+    # print(body)
     res = es.search(index="authors", body=body, size=1000)
     res = res['hits']
 
