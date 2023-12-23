@@ -50,8 +50,6 @@ def reconstruct_text(inverted_index):
     return reconstructed_txt
 
 
-reconstructed_text = reconstruct_text(sample_abstract_inverted_index)
-print(reconstructed_text)
 
 
 def BasicSearch(request):
@@ -64,7 +62,9 @@ def BasicSearch(request):
     sort_order = search_data.get('sort_order')
     includes = ["title",
                 "publication_date",
-                "authorships.author.display_name"]
+                "authorships.author.display_name",
+                "keywords.keyword",
+                "primary_location.display_name"]
     if sort_by != "":
         if "." in search_field:
             field_left = ""
@@ -204,8 +204,6 @@ def BasicSearch(request):
     print(body)
     res = es.search(index="works", body=body, size=1000)
     res = res['hits']
-    for hit in res['hits']:
-        hit['_source']['abstract'] = reconstruct_text(sample_abstract_inverted_index)
     return JsonResponse(res, safe=False)
 
 
@@ -216,7 +214,9 @@ def MultiSearch(request):
     search_list = search_data.get('search_list')
     includes = ["title",
                 "publication_date",
-                "authorships.author.display_name"]
+                "authorships.author.display_name",
+                "keywords.keyword",
+                "primary_location.display_name"]
     # print(search_list)
     match_list = []
     highlighy_list = []
@@ -303,7 +303,9 @@ def FuzzySearch(request):
     sort_order = search_data.get('sort_order')
     includes = ["title",
                 "publication_date",
-                "authorships.author.display_name"]
+                "authorships.author.display_name",
+                "keywords.keyword",
+                "primary_location.display_name"]
     if sort_by != "":
         if "." in search_field:
             field_left = ""
@@ -600,7 +602,6 @@ def GetPaperByID(request):
             work_data = Work_Data.objects.get(work_id=paper_id)
             work_data.browse_times += 1
             work_data.save()
-            res['_source']['abstract'] = reconstruct_text(sample_abstract_inverted_index)
         else:
             Work_Data.objects.create(work_id=paper_id, title=title, browse_times=1)
 
