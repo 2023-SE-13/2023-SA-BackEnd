@@ -411,7 +411,10 @@ def FuzzySearch(request):
                             }
                         ]
                     }
-                }
+                },
+                "_source": {
+                    "includes": includes
+                },
             }
         else:
 
