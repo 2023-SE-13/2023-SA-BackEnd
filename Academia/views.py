@@ -604,9 +604,11 @@ def GetPaperByID(request):
         else:
             Work_Data.objects.create(work_id=paper_id, title=title, browse_times=1)
         related_works = res['_source']['related_works']
+        referenced_works = res['_source']['referenced_works']
         res['_source']['related_works'] = []
-        print(res['_source']['related_works'])
-        print(related_works)
+        res['_source']['referenced_works'] = []
+        # print(res['_source']['related_works'])
+        # print(related_works)
         if related_works:
             # print(related_works)
             i = 0
@@ -635,6 +637,36 @@ def GetPaperByID(request):
                         "authorships": related_authorships
                     }
                     res['_source']['related_works'].append(obj)
+
+                    i = i + 1
+        if referenced_works:
+            # print(related_works)
+            i = 0
+            for referenced_work in referenced_works:
+                body3 = {
+                    "query": {
+                        "term": {
+                            "_id": referenced_work
+                        }
+                    },
+                    "_source": {
+                        "includes": ["title", "authorships.author.display_name"]
+                    }
+                }
+                # print(body2)
+                res3 = es.search(index="works", body=body3)['hits']['hits']
+                # print(res2)
+                if res3:
+                    res3 = res3[0]
+                    referenced_id = res3['_id']
+                    referenced_title = res3['_source']['title']
+                    referenced_authorships = res3['_source']['authorships']
+                    obj = {
+                        "id": referenced_id,
+                        "title": referenced_title,
+                        "authorships": referenced_authorships
+                    }
+                    res['_source']['referenced_works'].append(obj)
 
                     i = i + 1
 
