@@ -1,4 +1,5 @@
 import os
+import random
 
 from django.contrib.auth.hashers import check_password, make_password
 from django.core.exceptions import ValidationError
@@ -8,10 +9,11 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import authentication_classes, permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
+from django.utils import timezone
 
 from SA_backend.settings import BASE_DIR
 from message.models import ApplyBeAuthor, ApplyWork, ReplyToUser
-from user.models import User, Follow, Author
+from user.models import User, Follow, Author, VerificationCode
 from utils.utils import send_email
 
 
@@ -19,12 +21,26 @@ from utils.utils import send_email
 def register(request):
     username = request.POST.get('username', '')
     password = request.POST.get('password', '')
+    code = request.POST.get('code', '')
+    email = request.POST.get('email', '')
+    if not password or not email or not code or not username:
+        return JsonResponse({'result': 1, 'message': r'缺少必要信息'})
+
+    verification_code = VerificationCode.objects.filter(email=email).order_by('-created_at').first()
+
+    if not verification_code or verification_code.code != code:
+        return JsonResponse({'result': 1, 'message': r'验证码错误'})
+
+    if verification_code.expires_at < timezone.now():
+        print(verification_code.expires_at)
+        print(timezone.now())
+        return JsonResponse({'result': 1, 'message': r'验证码已过期'})
 
     if User.objects.filter(username=username).exists():
         result = {'result': 1, 'message': r'用户名已存在'}
         return JsonResponse(result)
 
-    email = request.POST.get('email', '')
+
     hashed_password = make_password(password)
     user = User.objects.create(username=username, password=hashed_password, email=email)
     user.save()
@@ -49,6 +65,7 @@ def login(request):
     except User.DoesNotExist:
         return JsonResponse({'result': 1, 'message': r'用户名或密码错误'})
 
+
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -58,7 +75,6 @@ def follow_author(request):
         author_id = request.POST.get('author_id')
         user_id = request.user.id
         author_name = request.POST.get('author_name')
-
 
         # 检查用户是否已经关注了该学者
         if Follow.objects.filter(user=request.user, author_id=author_id).exists():
@@ -81,29 +97,13 @@ email_verify = ['' for i in range(100)]
 code_list = [0 for i in range(100)]
 
 
+@api_view(['POST'])
 def send_code(request):
-    username = request.POST.get('username')
     email = request.POST.get('email')
-    user_id = User.objects.get(username=username).id
-    if User.objects.filter(username=username, email=email).exists():
-        user_id = User.objects.get(username=username).id
-        # result = {'result': 0, 'report': r'确认成功'}
-        global username_verify
-        username_verify[user_id] = username
-        global email_verify
-        email_verify[user_id] = email
-    else:
-        result = {'result': 1, 'report': r'邮箱错误'}
-        return JsonResponse(result)
-    try:
-        global code_list
-        code_list[user_id] = send_email(email_verify[user_id])
-        result = {'result': 0, 'report': r'发送成功'}
-        return JsonResponse(result)
-        # return JsonResponse(result)
-    except:
-        result = {'result': 1, 'report': r'发送失败'}
-        return JsonResponse(result)
+    code = str(random.randint(1000, 9999))
+    VerificationCode.objects.create(email=email, code=code)
+    send_email(email, code)
+    return JsonResponse({'result': 0, 'message': r'验证码已发送'})
 
 
 def verify_code(request):
@@ -225,3 +225,28 @@ def show_follow_author(request):
             } for message in messages]
             result = {'result': 0, 'messages': messages_list}
             return JsonResponse(result)
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def upload_avatar(request):
+    user = request.user
+    avatar = request.FILES.get('avatar')
+
+    if avatar:  # 如果上传了头像文件
+        # 生成头像文件的保存路径
+        _, ext = os.path.splitext(avatar.name)
+        avatar_path = os.path.join(BASE_DIR, 'avatar', f'{user.id}_avatar.png')
+
+        # 保存头像文件到指定路径
+        with open(avatar_path, 'wb') as file:
+            for chunk in avatar.chunks():
+                file.write(chunk)
+
+        # 更新用户的头像路径
+        user.photo_url = avatar_path
+        user.photo_url_out = 'http://116.63.49.180:8080/avatar/' + f'{user.id}_avatar.png'
+        user.save()
+        result = {'result': 0, 'report': r'上传成功'}
+        return JsonResponse(result)

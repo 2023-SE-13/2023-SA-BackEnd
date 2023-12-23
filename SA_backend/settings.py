@@ -48,20 +48,14 @@ INSTALLED_APPS = [
     # 'django_elasticsearch_dsl_drf',
     'rest_framework.authtoken',
     'Administrator',
-
+    'Browhistory',
 ]
-# ELASTICSEARCH_DSL = {
-#     'default': {
-#         'hosts': 'elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200'
-#         # 'hosts': '127.0.0.1:9200'
-#     }
-# }
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -90,13 +84,6 @@ WSGI_APPLICATION = 'SA_backend.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
-#}
 DATABASES = {
 
     'default': {
@@ -150,28 +137,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# # 配置haystack全文检索框架
-# # HAYSTACK_CONNECTIONS = {
-# #     'default': {
-# #         'ENGINE': 'haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine',
-# #         'URL': 'http://elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200/',
-# #         'INDEX_NAME': 'haystack',
-# #     },
-# # }
-# # 当添加、修改、删除数据时，自动更新索引
-# HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
-
-
-# 邮件相关配置
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # 发送邮件配置
-EMAIL_HOST = 'smtp.163.com'  # 服务器名称
-EMAIL_PORT = 25  # 服务端口
-EMAIL_HOST_USER = 'judgement9259@163.com'  # 填写自己邮箱
-EMAIL_HOST_PASSWORD = 'NNCABGNHANCKJOCK'  # 在邮箱中设置的客户端授权密码
-EMAIL_FROM = 'MSI'  # 收件人看到的发件人
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-EMAIL_USE_TLS = True  # 是否使用TLS安全传输协议
 
 AUTH_USER_MODEL = 'user.User'
 

@@ -1,16 +1,33 @@
-from django.core.mail import send_mail
+import smtplib
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 
-def send_email(email):
-    # 生成验证码
-    import random
-    str1 = '0123456789'
-    rand_str = ''
-    for i in range(0, 6):
-        rand_str += str1[random.randrange(0, len(str1))]
-    # 发送邮件：
-    # send_mail的参数分别是  邮件标题，邮件内容，发件箱(settings.py中设置过的那个)，收件箱列表(可以发送给多个人),失败静默(若发送失败，报错提示我们)
-    message = "您的验证码是" + rand_str + "，当前会话内有效，请尽快填写"
-    email_box = [email]
-    send_mail('MSI', message, 'judgement9259@163.com', email_box, fail_silently=False)
-    return rand_str
+def send_email(email, code):
+    from email.mime.text import MIMEText
+    from email.header import Header
+
+    # 配置SMTP服务器和端口
+    smtp_server = os.getenv('SMTP_SERVER')
+
+    smtp_port = int(os.getenv('SMTP_PORT'))  # 确保这是一个整数
+    smtp_user = os.getenv('SMTP_USER')
+    smtp_pass = os.getenv('SMTP_PASS')
+    print(smtp_server,smtp_port,smtp_user,smtp_pass)
+    # 创建SMTP对象
+    server = smtplib.SMTP_SSL(smtp_server, smtp_port)
+    server.login(smtp_user, smtp_pass)
+
+    # 创建邮件内容
+    validity_duration = 10  # 假设验证码有效时间是 10 分钟
+
+    msg = MIMEText(f'Your verification code is {code}. This code will expire in {validity_duration} minutes.', 'plain',
+                   'utf-8')
+    msg['From'] = Header(smtp_user)
+    msg['To'] = Header(email)
+    msg['Subject'] = Header('Verification code')
+
+    # 发送邮件
+    server.sendmail(smtp_user, [email], msg.as_string())
+    server.quit()

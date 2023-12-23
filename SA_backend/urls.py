@@ -25,6 +25,7 @@ urlpatterns = [
     # path('search/', PublisherDocumentView.as_view({'get': 'list'})),
     path('api/user/', include(('user.urls', 'user'))),
     path('api/Administrator/', include(('Administrator.urls', 'Administrator'))),
+    path('api/browhistory/',include(('Browhistory.urls', 'Browhistory'))),
     path('api/academia/', include(('Academia.urls', 'Academia'))),
     # path('api/Academia/', include(('Academia.urls', 'Academia'))),
 ]
