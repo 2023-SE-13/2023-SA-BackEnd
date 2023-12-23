@@ -322,8 +322,11 @@ def FuzzySearch(request):
                                     "path": field_left,
                                     "query": {
 
-                                        "fuzzy": {
-                                            search_field: search_content
+                                        "match": {
+                                            search_field: {
+                                                "query": search_content,
+                                                "fuzziness": "auto"
+                                            }
                                         }
 
                                     }
@@ -354,8 +357,11 @@ def FuzzySearch(request):
             search_field += ".keyword"
             body = {
                 "query": {
-                    "fuzzy": {
-                        search_field: search_content
+                    "match": {
+                        search_field: {
+                            "query": search_content,
+                            "fuzziness": "auto"
+                        }
                     }
                 },
                 "sort": [
@@ -394,8 +400,11 @@ def FuzzySearch(request):
                                     "path": field_left,
                                     "query": {
 
-                                        "fuzzy": {
-                                            search_field: search_content
+                                        "match": {
+                                            search_field: {
+                                                "query": search_content,
+                                                "fuzziness": "auto"
+                                            }
                                         }
                                     }
                                 }
@@ -409,8 +418,11 @@ def FuzzySearch(request):
             print(search_field)
             body = {
                 "query": {
-                    "fuzzy": {
-                        search_field: search_content
+                    "match": {
+                        search_field: {
+                            "query": search_content,
+                            "fuzziness": "auto"
+                        }
                     }
                 },
                 "_source": {
@@ -503,7 +515,7 @@ def AuthorFuzzySearch(request):
     # size = 20
     search_content = search_data.get('search_content')
     search_field = search_data.get('search_field')
-    search_field += ".keyword"
+    # search_field += ".keyword"
     sort_by = search_data.get('sort_by')
     sort_order = search_data.get('sort_order')
     includes = ["display_name",
@@ -513,8 +525,11 @@ def AuthorFuzzySearch(request):
     if sort_by != "":
         body = {
             "query": {
-                "fuzzy": {
-                    search_field: search_content
+                "match": {
+                    search_field: {
+                        "query": search_content,
+                        "fuzziness": "auto"
+                    }
                 }
             },
             "sort": [
@@ -539,8 +554,11 @@ def AuthorFuzzySearch(request):
     else:
         body = {
             "query": {
-                "fuzzy": {
-                    search_field: search_content
+                "match": {
+                    search_field: {
+                        "query": search_content,
+                        "fuzziness": "auto"
+                    }
                 }
             },
             # "from": (page - 1) * size,
