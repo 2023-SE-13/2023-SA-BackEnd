@@ -312,7 +312,7 @@ def FuzzySearch(request):
             if index != -1:
                 field_left = search_field[:index]
                 field_right = search_field[index + 1:]
-            search_field += ".keyword"
+            
             body = {
                 "query": {
                     "bool": {
@@ -354,7 +354,7 @@ def FuzzySearch(request):
                 }
             }
         else:
-            search_field += ".keyword"
+            
             body = {
                 "query": {
                     "match": {
@@ -390,7 +390,7 @@ def FuzzySearch(request):
             if index != -1:
                 field_left = search_field[:index]
                 field_right = search_field[index + 1:]
-            search_field += ".keyword"
+            
             body = {
                 "query": {
                     "bool": {
@@ -414,7 +414,7 @@ def FuzzySearch(request):
                 }
             }
         else:
-            search_field += ".keyword"
+            
             print(search_field)
             body = {
                 "query": {
@@ -515,7 +515,7 @@ def AuthorFuzzySearch(request):
     # size = 20
     search_content = search_data.get('search_content')
     search_field = search_data.get('search_field')
-    # search_field += ".keyword"
+    # 
     sort_by = search_data.get('sort_by')
     sort_order = search_data.get('sort_order')
     includes = ["display_name",
