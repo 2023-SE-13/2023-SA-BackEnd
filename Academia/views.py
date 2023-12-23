@@ -1,5 +1,6 @@
 # Create your views here.
 import json
+import string
 
 from django.http import JsonResponse
 from elasticsearch.client import Elasticsearch
@@ -7,6 +8,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from .models import *
+from user.models import Author_User
 
 es = Elasticsearch(hosts='elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200')
 sample_abstract_inverted_index = {
@@ -64,54 +66,142 @@ def BasicSearch(request):
                 "publication_date",
                 "authorships.author.display_name"]
     if sort_by != "":
-        body = {
-            "query": {
-                "match": {
-                    search_field: search_content
-                }
-            },
-            # "from": (page - 1) * size,
-            # "size": size,
-            "sort": [
-                {
-                    sort_by: {
-                        "order": sort_order
-                    }
-                }
-            ],
-            "_source": {
-                "includes": includes
-            },
-            "highlight": {
-                "fields": {
-                    search_field: {}
-                },
-                "pre_tags": "<font color='red'>",
-                "post_tags": "</font>",
-            }
-        }
-    else:
-        body = {
-            "query": {
-                "match": {
-                    search_field: search_content
-                }
-            },
-            # "from": (page - 1) * size,
-            # "size": size,
-            "_source": {
-                "includes": includes
-            },
-            "highlight": {
-                "fields": {
-                    search_field: {}
-                },
-                "pre_tags": "<font color='red'>",
-                "post_tags": "</font>",
-            }
+        if "." in search_field:
+            field_left = ""
+            field_right = ""
+            index = search_field.find('.')  # 找到第一个.的位置
+            if index != -1:
+                field_left = search_field[:index]  # 获取最后一个.之前的部分
+                field_right = search_field[index + 1:]  # 获取最后一个.之后的部
+            body = {
+                "query": {
+                    "bool": {
+                        "must": [
+                            {
+                                "nested": {
+                                    "path": field_left,
+                                    "query": {
 
-        }
-    # print(body)
+                                        "match": {
+                                            search_field: search_content
+                                        }
+
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                "sort": [
+                    {
+                        sort_by: {
+                            "order": sort_order
+                        }
+                    }
+                ],
+                # "from": (page - 1) * size,
+                # "size": size,
+                "_source": {
+                    "includes": includes
+                },
+                "highlight": {
+                    "fields": {
+                        search_field: {}
+                    },
+                    "pre_tags": "<font color='red'>",
+                    "post_tags": "</font>",
+                }
+            }
+        else:
+            body = {
+
+                "query": {
+                    "match": {
+                        search_field: search_content
+                    }
+                },
+                # "from": (page - 1) * size,
+                # "size": size,
+                "sort": [
+                    {
+                        sort_by: {
+                            "order": sort_order
+                        }
+                    }
+                ],
+                "_source": {
+                    "includes": includes
+                },
+                "highlight": {
+                    "fields": {
+                        search_field: {}
+                    },
+                    "pre_tags": "<font color='red'>",
+                    "post_tags": "</font>",
+                }
+            }
+    else:
+        if "." in search_field:
+            field_left = ""
+            field_right = ""
+            index = search_field.find('.')  # 找到第一个.的位置
+            if index != -1:
+                field_left = search_field[:index]  # 获取最后一个.之前的部分
+                field_right = search_field[index + 1:]  # 获取最后一个.之后的部
+            body = {
+                "query": {
+                    "bool": {
+                        "must": [
+                            {
+                                "nested": {
+                                    "path": field_left,
+                                    "query": {
+
+                                        "match": {
+                                            search_field: search_content
+                                        }
+
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                # "from": (page - 1) * size,
+                # "size": size,
+                "_source": {
+                    "includes": includes
+                },
+                "highlight": {
+                    "fields": {
+                        search_field: {}
+                    },
+                    "pre_tags": "<font color='red'>",
+                    "post_tags": "</font>",
+                }
+            }
+        else:
+            body = {
+                "query": {
+                    "match": {
+                        search_field: search_content
+                    }
+                },
+                # "from": (page - 1) * size,
+                # "size": size,
+                "_source": {
+                    "includes": includes
+                },
+                "highlight": {
+                    "fields": {
+                        search_field: {}
+                    },
+                    "pre_tags": "<font color='red'>",
+                    "post_tags": "</font>",
+                }
+
+            }
+    print(body)
     res = es.search(index="works", body=body, size=1000)
     res = res['hits']
     for hit in res['hits']:
@@ -133,11 +223,24 @@ def MultiSearch(request):
     for search_pair in search_list:
         search_content = search_pair['search_content']
         search_field = search_pair['search_field']
-        match_object = {
-            "match": {
-                search_field: search_content
+        if search_field == "authorships.author.display_name":
+            match_object = {
+                "nested": {
+                    "path": "authorships",
+                    "query": {
+                        "match": {
+                            search_field: search_content
+                        }
+                    }
+                }
             }
-        }
+        else:
+            match_object = {
+                "match": {
+                    search_field: search_content
+                }
+            }
+
         highlighy_object = {
             search_field: {}
         }
@@ -202,48 +305,120 @@ def FuzzySearch(request):
                 "publication_date",
                 "authorships.author.display_name"]
     if sort_by != "":
-        body = {
-            "query": {
-                "fuzzy": {
-                    search_field: search_content
+        if "." in search_field:
+            field_left = ""
+            field_right = ""
+            index = search_field.find('.')
+            if index != -1:
+                field_left = search_field[:index]
+                field_right = search_field[index + 1:]
+            body = {
+                "query": {
+                    "bool": {
+                        "must": [
+                            {
+                                "nested": {
+                                    "path": field_left,
+                                    "query": {
+
+                                        "fuzzy": {
+                                            search_field: search_content
+                                        }
+
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                "sort": [
+                    {
+                        sort_by: {
+                            "order": sort_order
+                        }
+                    }
+                ],
+                "_source": {
+                    "includes": includes
+                },
+                "highlight": {
+                    "fields": {
+                        search_field: {}
+                    },
+                    "pre_tags": "<font color='red'>",
+                    "post_tags": "</font>",
                 }
-            },
-            "sort": [
-                {
-                    sort_by: {
-                        "order": sort_order
+            }
+        else:
+            body = {
+                "query": {
+                    "fuzzy": {
+                        search_field: search_content
+                    }
+                },
+                "sort": [
+                    {
+                        sort_by: {
+                            "order": sort_order
+                        }
+                    }
+                ],
+                "_source": {
+                    "includes": includes
+                },
+                "highlight": {
+                    "fields": {
+                        search_field: {}
+                    },
+                    "pre_tags": "<font color='red'>",
+                    "post_tags": "</font>",
+                }
+            }
+    else:
+        if "." in search_field:
+            field_left = ""
+            field_right = ""
+            index = search_field.find('.')
+            if index != -1:
+                field_left = search_field[:index]
+                field_right = search_field[index + 1:]
+            body = {
+                "query": {
+                    "bool": {
+                        "must": [
+                            {
+                                "nested": {
+                                    "path": field_left,
+                                    "query": {
+
+                                        "fuzzy": {
+                                            search_field: search_content
+                                        }
+                                    }
+                                }
+                            }
+                        ]
                     }
                 }
-            ],
-            "_source": {
-                "includes": includes
-            },
-            "highlight": {
-                "fields": {
-                    search_field: {}
-                },
-                "pre_tags": "<font color='red'>",
-                "post_tags": "</font>",
             }
-        }
-    else:
-        body = {
-            "query": {
-                "fuzzy": {
-                    search_field: search_content
+        else:
+            body = {
+                "query": {
+                    "fuzzy": {
+                        search_field: search_content
+                    }
+                },
+                "_source": {
+                    "includes": includes
+                },
+                "highlight": {
+                    "fields": {
+                        search_field: {}
+                    },
+                    "pre_tags": "<font color='red'>",
+                    "post_tags": "</font>",
                 }
-            },
-            "_source": {
-                "includes": includes
-            },
-            "highlight": {
-                "fields": {
-                    search_field: {}
-                },
-                "pre_tags": "<font color='red'>",
-                "post_tags": "</font>",
             }
-        }
     # print(body)
     res = es.search(index="works", body=body, size=1000)
     res = res['hits']
@@ -316,6 +491,71 @@ def AuthorSearch(request):
     return JsonResponse(res, safe=False)
 
 
+def AuthorFuzzySearch(request):
+    search_data = json.loads(request.body.decode('utf-8'))
+    # page = search_data.get('page')
+    # size = 20
+    search_content = search_data.get('search_content')
+    search_field = search_data.get('search_field')
+    sort_by = search_data.get('sort_by')
+    sort_order = search_data.get('sort_order')
+    includes = ["display_name",
+                "cited_by_count",
+                "last_known_institution.display_name"]
+    if sort_by != "":
+        body = {
+            "query": {
+                "fuzzy": {
+                    search_field: search_content
+                }
+            },
+            "sort": [
+                {
+                    sort_by: {
+                        "order": sort_order
+                    }
+                }
+            ],
+            "_source": {
+                "includes": includes
+            },
+            "highlight": {
+                "fields": {
+                    search_field: {}
+                },
+                "pre_tags": "<font color='red'>",
+                "post_tags": "</font>",
+            }
+
+        }
+    else:
+        body = {
+            "query": {
+                "fuzzy": {
+                    search_field: search_content
+                }
+            },
+            # "from": (page - 1) * size,
+            # "size": size,
+            "_source": {
+                "includes": includes
+            },
+            "highlight": {
+                "fields": {
+                    search_field: {}
+                },
+                "pre_tags": "<font color='red'>",
+                "post_tags": "</font>",
+            }
+
+        }
+    print(body)
+    res = es.search(index="authors", body=body, size=1000)
+    res = res['hits']
+
+    return JsonResponse(res, safe=False)
+
+
 def GetPaperByID(request):
     paper_id = request.GET.get('paper_id')
 
@@ -338,6 +578,26 @@ def GetPaperByID(request):
         else:
             Work_Data.objects.create(work_id=paper_id, title=title, browse_times=1)
 
+    return JsonResponse(res, safe=False)
+
+
+def GetAuthorByID(request):
+    author_id = request.GET.get('author_id')
+
+    body = {
+        "query": {
+            "term": {
+                "_id": author_id
+            }
+        }
+    }
+    res = es.search(index="authors", body=body)['hits']['hits']
+    if res:
+        res = res[0]
+        if Author_User.objects.filter(author_id=author_id).exists():
+            res['is_applied'] = True
+        else:
+            res['is_applied'] = False
     return JsonResponse(res, safe=False)
 
 
