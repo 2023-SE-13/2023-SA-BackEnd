@@ -9,4 +9,5 @@ urlpatterns = [
     path('add_brow_history', add_brow_history),
     path('get_work_list', get_work_list),
     path('delete_brow_history', delete_brow_history),
+    path('delete_all_brow_history', delete_all_brow_history)
 ]
