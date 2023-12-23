@@ -250,3 +250,40 @@ def upload_avatar(request):
         user.save()
         result = {'result': 0, 'report': r'上传成功'}
         return JsonResponse(result)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def change_user_name(request):
+    if request.method == 'POST':
+        user = request.user
+        new_name = request.data.get('username')
+
+        try:
+            user.username = new_name
+            user.save()
+            return JsonResponse({'result':0,'message': 'User name updated successfully.'})
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found.'}, status=404)
+
+    return JsonResponse({'error': 'Invalid request method.'}, status=400)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def change_user_email(request):
+    if request.method == 'POST':
+        user = request.user
+        new_email = request.data.get('email')
+
+        try:
+            # print(user.email)
+            # print(new_email)
+            user.email = new_email
+            user.save()
+            return JsonResponse({'result':0,'message': 'User email updated successfully.'})
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found.'}, status=404)
+
+    return JsonResponse({'error': 'Invalid request method.'}, status=400)
+

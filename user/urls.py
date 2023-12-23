@@ -15,5 +15,6 @@ urlpatterns = [
     path('get_apply_results', get_apply_results),
     path('show_follow_author', show_follow_author),
     path('upload_avatar', upload_avatar),
-
+    path('change_user_name', change_user_name),
+    path('change_user_email', change_user_email)
 ]
