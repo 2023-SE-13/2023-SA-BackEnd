@@ -232,6 +232,17 @@ def MultiSearch(request):
                     }
                 }
             }
+        elif search_field == "keywords.keyword":
+            match_object = {
+                "nested": {
+                    "path": "keywords",
+                    "query": {
+                        "match": {
+                            search_field: search_content
+                        }
+                    }
+                }
+            }
         else:
             match_object = {
                 "match": {
