@@ -14,5 +14,5 @@ urlpatterns = [
     path('get_author', GetAuthorByID),
     path('favorite_paper', favorite_paper),
     path('show_favorites', show_favorites),
-    
+    path('return_data', ReturnData),
 ]

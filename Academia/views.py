@@ -52,6 +52,11 @@ def reconstruct_text(inverted_index):
     return reconstructed_txt
 
 
+def ReturnData(request):
+    return_data = json.loads(request.body.decode('utf-8'))
+    return JsonResponse(return_data, safe=False)
+
+
 def BasicSearch(request):
     search_data = json.loads(request.body.decode('utf-8'))
     # page = search_data.get('page')
@@ -773,8 +778,6 @@ def favorite_paper(request):
         # 创建关注关系
 
         Favorite.objects.create(user=request.user, article_id=paper_id, article_name=paper_name)
-
-
 
         result = {'result': 0, 'message': r'收藏成功'}
         return JsonResponse(result)
