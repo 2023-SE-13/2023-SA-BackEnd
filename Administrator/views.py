@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
-
+from django.utils.dateformat import DateFormat
 from Academia.models import Work_Author
 from message.models import ApplyBeAuthor, ApplyWork, ReplyToUser
 from user.models import User, Author_User
@@ -24,8 +24,9 @@ def show_author_message(request):
             messages_list = [{
                 'id': message.id,
                 'author_id': message.author_id,
-                'send_user': message.send_user.username,  # 假设你想返回发送用户的用户名
+                'username': message.send_user.username,  # 假设你想返回发送用户的用户名
                 'send_user_id': message.send_user.id,
+                'datetime': DateFormat(message.created_at).format('Y-m-d H:i')
             } for message in messages]
             result = {'result': 0, 'messages': messages_list}
             return JsonResponse(result)
