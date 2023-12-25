@@ -744,6 +744,32 @@ def GetAuthorByID(request):
             res['is_applied'] = False
     return JsonResponse(res, safe=False)
 
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def store_body(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        body = data.get('body')
+        if Body_User.objects.filter(user=request.user).exists():
+            Body_User.objects.update(body=body)
+        else:
+            Body_User.objects.create(user=request.user, body=body)
+    result = {'result': 0, 'message': '存储成功'}
+    return JsonResponse(result)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_body(request):
+    if request.method == 'GET':
+        try:
+            body = Body_User.objects.get(user=request.user).Body
+
+            return JsonResponse(body)
+        except:
+            result = {'result': 1, 'message': r'获取失败'}
+            return JsonResponse(result)
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
