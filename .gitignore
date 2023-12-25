@@ -10,6 +10,7 @@ restart_server.sh
 *.log
 project_images/
 avatar/
+messagetoAdmin/
 # Distribution / packaging
 .Python
 build/
