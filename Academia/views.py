@@ -109,7 +109,8 @@ def BasicSearch(request):
                     },
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
-                }
+                },
+                "track_total_hits": 1000
             }
         else:
             body = {
@@ -137,7 +138,8 @@ def BasicSearch(request):
                     },
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
-                }
+                },
+                "track_total_hits": 1000
             }
     else:
         if "." in search_field:
@@ -177,7 +179,8 @@ def BasicSearch(request):
                     },
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
-                }
+                },
+                "track_total_hits": 1000
             }
         else:
             body = {
@@ -197,8 +200,8 @@ def BasicSearch(request):
                     },
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
-                }
-
+                },
+                "track_total_hits": 1000
             }
     print(body)
     res = es.search(index="works", body=body, size=1000)
@@ -279,7 +282,9 @@ def MultiSearch(request):
                 "fields": highlighy_list,
                 "pre_tags": "<font color='red'>",
                 "post_tags": "</font>",
-            }
+            },
+            "track_total_hits": 1000
+
         }
     else:
         body = {
@@ -296,7 +301,9 @@ def MultiSearch(request):
                 "fields": highlighy_list,
                 "pre_tags": "<font color='red'>",
                 "post_tags": "</font>",
-            }
+            },
+            "track_total_hits": 1000
+
         }
     # print(body)
     res = es.search(index="works", body=body, size=1000)
@@ -365,7 +372,9 @@ def FuzzySearch(request):
                     },
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
-                }
+                },
+                "track_total_hits": 1000
+
             }
         else:
 
@@ -394,7 +403,9 @@ def FuzzySearch(request):
                     },
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
-                }
+                },
+                "track_total_hits": 1000
+
             }
     else:
         if "." in search_field:
@@ -429,10 +440,18 @@ def FuzzySearch(request):
                 "_source": {
                     "includes": includes
                 },
+                "highlight": {
+                    "fields": {
+                        search_field: {}
+                    },
+                    "pre_tags": "<font color='red'>",
+                    "post_tags": "</font>",
+                },
+                "track_total_hits": 1000
             }
         else:
 
-            print(search_field)
+            # print(search_field)
             body = {
                 "query": {
                     "match": {
@@ -451,9 +470,11 @@ def FuzzySearch(request):
                     },
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
-                }
+                },
+                "track_total_hits": 1000
+
             }
-    print(body)
+    # print(body)
     res = es.search(index="works", body=body, size=1000)
     res = res['hits']
 
@@ -495,7 +516,8 @@ def AuthorSearch(request):
                 },
                 "pre_tags": "<font color='red'>",
                 "post_tags": "</font>",
-            }
+            },
+            "track_total_hits": 1000
 
         }
     else:
