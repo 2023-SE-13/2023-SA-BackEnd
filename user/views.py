@@ -338,6 +338,8 @@ def get_self_information(request):
                 'result': 0,
                 'photo_url_out': user.photo_url_out,
                 'author_id': "",
+                'is_authentication':user.is_authentication,
+                'true_name':user.true_name,
             }
             author_user = Author_User.objects.filter(user=user).first()
             if author_user:
@@ -393,6 +395,8 @@ def get_specific_information(request):
                 'result': 0,
                 'photo_url_out': user.photo_url_out,
                 'author_id': "",
+                'is_authentication': user.is_authentication,
+                'true_name': user.true_name,
             }
             author_user = Author_User.objects.filter(user=user).first()
             if author_user:
