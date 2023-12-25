@@ -27,5 +27,6 @@ urlpatterns = [
     path('api/Administrator/', include(('Administrator.urls', 'Administrator'))),
     path('api/browhistory/',include(('Browhistory.urls', 'Browhistory'))),
     path('api/academia/', include(('Academia.urls', 'Academia'))),
+    path('api/message/', include(('message.urls', 'message'))),
     # path('api/Academia/', include(('Academia.urls', 'Academia'))),
 ]
