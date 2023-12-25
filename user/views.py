@@ -13,7 +13,7 @@ from django.utils import timezone
 
 from SA_backend.settings import BASE_DIR
 from message.models import ApplyBeAuthor, ApplyWork, ReplyToUser
-from user.models import User, Follow, Author, VerificationCode
+from user.models import User, Follow, Author, VerificationCode, Author_User
 from utils.utils import send_email
 
 
@@ -315,7 +315,6 @@ def change_user_password(request):
 def get_self_information(request):
     if request.method == 'GET':
         user = request.user
-
         try:
             response_data = {
                 'id': user.id,
@@ -334,7 +333,11 @@ def get_self_information(request):
                 'is_author': user.is_author,
                 'result': 0,
                 'photo_url_out': user.photo_url_out,
+                'author_id': "",
             }
+            author_user = Author_User.objects.filter(user=user).first()
+            if author_user:
+                response_data['author_id'] = author_user.author_id
             return JsonResponse(response_data)
         except User.DoesNotExist:
             return JsonResponse({'error': 'User not found.'}, status=404)
@@ -385,7 +388,11 @@ def get_specific_information(request):
                 'is_author': user.is_author,
                 'result': 0,
                 'photo_url_out': user.photo_url_out,
+                'author_id': "",
             }
+            author_user = Author_User.objects.filter(user=user).first()
+            if author_user:
+                response_data['author_id'] = author_user.author_id
             return JsonResponse(response_data)
         except User.DoesNotExist:
             return JsonResponse({'error': 'User not found.'}, status=404)
