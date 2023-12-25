@@ -293,12 +293,12 @@ def change_user_email(request):
 def change_user_password(request):
     if request.method == 'POST':
         user = request.user
-        new_email = request.data.get('password')
+        new_password = request.data.get('password')
 
         try:
             # print(user.email)
             # print(new_email)
-            user.email = new_email
+            user.password = new_password
             user.save()
             return JsonResponse({'result':0,'message': 'User password updated successfully.'})
         except User.DoesNotExist:
@@ -306,3 +306,33 @@ def change_user_password(request):
 
     return JsonResponse({'error': 'Invalid request method.'}, status=400)
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_self_information(request):
+    if request.method == 'GET':
+        user = request.user
+
+        try:
+            response_data = {
+                'id': user.id,
+                'username': user.username,
+                'last_login': user.last_login,
+                'is_superuser': user.is_superuser,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+                'is_staff':user.is_staff,
+                'is_active':user.is_active,
+                'date_joined':user.date_joined,
+                'photo_url':user.photo_url,
+                'is_login':user.is_login,
+                'is_admin':user.is_admin,
+                'is_author':user.is_author,
+                'result': 0,
+            }
+            return JsonResponse(response_data)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found.'}, status=404)
+
+    return JsonResponse({'error': 'Invalid request method.'}, status=400)

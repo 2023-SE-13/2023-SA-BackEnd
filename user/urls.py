@@ -17,5 +17,6 @@ urlpatterns = [
     path('upload_avatar', upload_avatar),
     path('change_user_name', change_user_name),
     path('change_user_email', change_user_email),
-    path('change_user_password',change_user_password)
+    path('change_user_password',change_user_password),
+    path('get_self_information',get_self_information)
 ]
