@@ -9,7 +9,7 @@ __pycache__/
 restart_server.sh
 *.log
 project_images/
-avatars/
+avatar/
 # Distribution / packaging
 .Python
 build/
