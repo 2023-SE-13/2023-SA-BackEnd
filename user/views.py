@@ -142,7 +142,7 @@ def apply_author(request):
             )
             if photo:
                 _, ext = os.path.splitext(photo.name)
-                avatar_path = os.path.join(BASE_DIR, 'messageToAdmin_photo', f'{message.id}_message.png')
+                avatar_path = os.path.join(BASE_DIR, 'messagetoAdmin', f'{message.id}_message.png')
 
                 # 保存头像文件到指定路径
                 with open(avatar_path, 'wb') as file:
