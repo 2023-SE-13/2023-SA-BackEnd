@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.utils.timezone import localtime
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
@@ -26,7 +27,7 @@ def show_author_message(request):
                 'author_id': message.author_id,
                 'username': message.send_user.username,  # 假设你想返回发送用户的用户名
                 'send_user_id': message.send_user.id,
-                'datetime': DateFormat(message.created_at).format('Y-m-d H:i')
+                'datetime': localtime(message.created_at).strftime('%Y-%m-%d %H:%M')
             } for message in messages]
             result = {'result': 0, 'messages': messages_list}
             return JsonResponse(result)
