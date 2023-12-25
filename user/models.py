@@ -11,6 +11,10 @@ class User(AbstractUser):
     is_login = models.BooleanField('登录状态', default=False)
     is_admin = models.BooleanField('是否为管理员', default=False)
     is_author = models.BooleanField('是否为学者', default=False)
+    is_authentication = models.BooleanField('是否实名认证', default=False)
+    institution = models.CharField('机构', max_length=128, default='')
+    photo_url_out = models.CharField('用户头像外部路径', max_length=128, default='')
+    true_name = models.CharField('真实姓名', max_length=128, default='')
     groups = models.ManyToManyField(
         'auth.Group',
         verbose_name='groups',

@@ -306,3 +306,18 @@ def change_user_password(request):
 
     return JsonResponse({'error': 'Invalid request method.'}, status=400)
 
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def authentication(request):
+    if request.method == 'POST':
+        user = request.user
+        true_name = request.POST.get('true_name')
+        ID = request.POST.get('ID')
+        institution = request.POST.get('institution')
+        request.user.true_name = true_name
+       # request.user.ID = ID
+        request.user.institution = institution
+        request.user.is_authentication = True
+        request.user.save()
+        return JsonResponse({'result': 0, 'message': '认证成功'})
