@@ -59,7 +59,7 @@ def login(request):
         user = User.objects.get(username=username)
         if check_password(password, user.password):
             token, created = Token.objects.get_or_create(user=user)
-            return JsonResponse({'result': 0, 'message': r'登录成功', "token": str(token.key)})
+            return JsonResponse({'result': 0, 'message': r'登录成功', "token": str(token.key), 'is_admin': user.is_admin})
         else:
             return JsonResponse({'result': 1, 'message': r'用户名或密码错误'})
     except User.DoesNotExist:
@@ -282,6 +282,25 @@ def change_user_email(request):
             user.email = new_email
             user.save()
             return JsonResponse({'result':0,'message': 'User email updated successfully.'})
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found.'}, status=404)
+
+    return JsonResponse({'error': 'Invalid request method.'}, status=400)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def change_user_password(request):
+    if request.method == 'POST':
+        user = request.user
+        new_email = request.data.get('password')
+
+        try:
+            # print(user.email)
+            # print(new_email)
+            user.email = new_email
+            user.save()
+            return JsonResponse({'result':0,'message': 'User password updated successfully.'})
         except User.DoesNotExist:
             return JsonResponse({'error': 'User not found.'}, status=404)
 
