@@ -333,6 +333,7 @@ def get_self_information(request):
                 'is_admin': user.is_admin,
                 'is_author': user.is_author,
                 'result': 0,
+                'photo_url_out': user.photo_url_out,
             }
             return JsonResponse(response_data)
         except User.DoesNotExist:
@@ -383,6 +384,7 @@ def get_specific_information(request):
                 'is_admin': user.is_admin,
                 'is_author': user.is_author,
                 'result': 0,
+                'photo_url_out': user.photo_url_out,
             }
             return JsonResponse(response_data)
         except User.DoesNotExist:
