@@ -748,6 +748,22 @@ def favorite_paper(request):
         # 获取被关注的学者的ID
         paper_id = request.POST.get('paper_id')
         paper_name = request.POST.get('article_name')
+        response = es.get(index="works", id=paper_id)
+
+        current_favorites_count = response['_source'].get('collected_num', 0)
+        print(current_favorites_count)
+        new_favorites_count = current_favorites_count + 1
+        es.update(
+            index="works",
+            id=paper_id,
+            body={
+                "doc": {"collected_num": new_favorites_count},
+                "doc_as_upsert": True
+            }
+        )
+        updated_response = es.get(index="works", id=paper_id)
+        updated_response = json.dumps(updated_response)
+        print(updated_response)
 
         # 检查用户是否已经收藏了该文章
         if Favorite.objects.filter(user=request.user, article_id=paper_id).exists():
@@ -758,18 +774,7 @@ def favorite_paper(request):
 
         Favorite.objects.create(user=request.user, article_id=paper_id, article_name=paper_name)
 
-        response = es.get(index="works", id=paper_id)
-        current_favorites_count = response['_source'].get('favorites_count', 0)
-        new_favorites_count = current_favorites_count + 1
 
-        es.update(
-            index="works",
-            id=paper_id,
-            body={
-                "doc": {"favorites_count": new_favorites_count},
-                "doc_as_upsert": True
-            }
-        )
 
         result = {'result': 0, 'message': r'收藏成功'}
         return JsonResponse(result)
