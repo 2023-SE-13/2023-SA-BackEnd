@@ -714,7 +714,7 @@ def favorite_paper(request):
     if request.method == 'POST':
         # 获取被关注的学者的ID
         paper_id = request.POST.get('paper_id')
-        paper_name = request.POST.get('paper_name')
+        paper_name = request.POST.get('article_name')
 
         # 检查用户是否已经收藏了该文章
         if Favorite.objects.filter(user=request.user, article_id=paper_id).exists():
