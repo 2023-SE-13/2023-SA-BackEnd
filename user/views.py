@@ -351,3 +351,35 @@ def authentication(request):
         request.user.is_authentication = True
         request.user.save()
         return JsonResponse({'result': 0, 'message': '认证成功'})
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_specific_information(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        user = User.objects.get(id = user_id)
+
+        try:
+            response_data = {
+                'id': user.id,
+                'username': user.username,
+                'last_login': user.last_login,
+                'is_superuser': user.is_superuser,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+                'is_staff':user.is_staff,
+                'is_active':user.is_active,
+                'date_joined':user.date_joined,
+                'photo_url':user.photo_url,
+                'is_login':user.is_login,
+                'is_admin':user.is_admin,
+                'is_author':user.is_author,
+                'result': 0,
+            }
+            return JsonResponse(response_data)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found.'}, status=404)
+
+    return JsonResponse({'error': 'Invalid request method.'}, status=400)
