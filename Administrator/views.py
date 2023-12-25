@@ -60,6 +60,7 @@ def show_paper_message(request):
             return JsonResponse(result)
 
 
+
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
