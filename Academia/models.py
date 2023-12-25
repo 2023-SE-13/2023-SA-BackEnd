@@ -15,6 +15,6 @@ class Work_Author(models.Model):
 
 
 class Favorite(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     article_name = models.CharField( max_length=100)
     article_id = models.CharField(max_length=40)
