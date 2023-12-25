@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import *
 from user.models import Author_User
 
-es = Elasticsearch(hosts='elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200')
+es = Elasticsearch(hosts='elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200', timeout=30, max_retries=10, retry_on_timeout=True)
 sample_abstract_inverted_index = {
     "Despite": [
         0
