@@ -7,10 +7,12 @@ from elasticsearch.client import Elasticsearch
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
+from elasticsearch import helpers
 from .models import *
 from user.models import Author_User
 
-es = Elasticsearch(hosts='elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200', timeout=30, max_retries=10, retry_on_timeout=True)
+es = Elasticsearch(hosts='elastic:yXC0ZTAbjmhmyLHb7fBv@116.63.49.180:9200', timeout=30, max_retries=10,
+                   retry_on_timeout=True)
 sample_abstract_inverted_index = {
     "Despite": [
         0
@@ -746,6 +748,22 @@ def favorite_paper(request):
         # 获取被关注的学者的ID
         paper_id = request.POST.get('paper_id')
         paper_name = request.POST.get('article_name')
+        response = es.get(index="works", id=paper_id)
+
+        current_favorites_count = response['_source'].get('collected_num', 0)
+        print(current_favorites_count)
+        new_favorites_count = current_favorites_count + 1
+        es.update(
+            index="works",
+            id=paper_id,
+            body={
+                "doc": {"collected_num": new_favorites_count},
+                "doc_as_upsert": True
+            }
+        )
+        updated_response = es.get(index="works", id=paper_id)
+        updated_response = json.dumps(updated_response)
+        print(updated_response)
 
         # 检查用户是否已经收藏了该文章
         if Favorite.objects.filter(user=request.user, article_id=paper_id).exists():
@@ -755,6 +773,9 @@ def favorite_paper(request):
         # 创建关注关系
 
         Favorite.objects.create(user=request.user, article_id=paper_id, article_name=paper_name)
+
+
+
         result = {'result': 0, 'message': r'收藏成功'}
         return JsonResponse(result)
     else:
