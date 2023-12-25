@@ -302,7 +302,11 @@ def change_user_password(request):
             # print(new_email)
             user.set_password(new_password)
             user.save()
-            return JsonResponse({'result': 0, 'message': 'User password updated successfully.'})
+            print(new_password)
+            print(user.password)
+            return JsonResponse({'result': 0, 'new_password':
+                new_password,
+                                 'user_changed_password':user.password})
         except User.DoesNotExist:
             return JsonResponse({'error': 'User not found.'}, status=404)
 
