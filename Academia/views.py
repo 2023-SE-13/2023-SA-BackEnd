@@ -62,6 +62,7 @@ def BasicSearch(request):
                 "publication_date",
                 "authorships.author.display_name",
                 "keywords.keyword",
+                "abstract_inverted_index",
                 "primary_location.source.display_name"]
     if sort_by != "":
         if "." in search_field:
@@ -214,6 +215,7 @@ def MultiSearch(request):
                 "publication_date",
                 "authorships.author.display_name",
                 "keywords.keyword",
+                "abstract_inverted_index",
                 "primary_location.source.display_name"]
     # print(search_list)
     match_list = []
@@ -314,6 +316,7 @@ def FuzzySearch(request):
                 "publication_date",
                 "authorships.author.display_name",
                 "keywords.keyword",
+                "abstract_inverted_index",
                 "primary_location.source.display_name"]
     if sort_by != "":
         if "." in search_field:
