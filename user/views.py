@@ -298,7 +298,7 @@ def change_user_password(request):
         try:
             # print(user.email)
             # print(new_email)
-            user.password = new_password
+            user.set_password(new_password)
             user.save()
             return JsonResponse({'result':0,'message': 'User password updated successfully.'})
         except User.DoesNotExist:
