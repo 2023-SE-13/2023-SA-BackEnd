@@ -15,10 +15,12 @@ from user.models import User
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def add_brow_history(request):
+    # work_id = request.POST.get('work_id')
+    # work_name = request.POST.get('work_name')
     work_id = request.data.get('work_id')
     work_name = request.data.get('work_name')
-    print(work_id)
-    print(work_name)
+    # print(work_id)
+    # print(work_name)
 
     # 检查user_id和book_id是否存在
     if not work_id:
@@ -72,14 +74,14 @@ def get_work_list(request):
     # 返回JSON响应
     return JsonResponse(response_data)
 
-@api_view(['DELETE'])
+@api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_brow_history(request):
-    id = request.data.get("id")
+    history_id = request.data.get("id")
     try:
         user = request.user
-        deleted_count = BrowHistory.objects.filter(user=user,id=id).delete()
+        deleted_count = BrowHistory.objects.filter(user=user,id=history_id).delete()
 
         if deleted_count == 0:
             raise Exception('删除失败')
@@ -92,7 +94,7 @@ def delete_brow_history(request):
     except Exception as e:
         return JsonResponse({'message': str(e)}, status=400)
 
-@api_view(['DELETE'])
+@api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_all_brow_history(request):
