@@ -119,7 +119,7 @@ def BasicSearch(request):
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
                 },
-                "track_total_hits": 1000
+                "track_total_hits": 200
             }
         else:
             body = {
@@ -148,7 +148,7 @@ def BasicSearch(request):
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
                 },
-                "track_total_hits": 1000
+                "track_total_hits": 200
             }
     else:
         if "." in search_field:
@@ -189,7 +189,7 @@ def BasicSearch(request):
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
                 },
-                "track_total_hits": 1000
+                "track_total_hits": 200
             }
         else:
             body = {
@@ -210,10 +210,10 @@ def BasicSearch(request):
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
                 },
-                "track_total_hits": 1000
+                "track_total_hits": 200
             }
     print(body)
-    res = es.search(index="new_works", body=body, size=1000)
+    res = es.search(index="new_works", body=body, size=200)
     res = res['hits']
     return JsonResponse(res, safe=False)
 
@@ -294,7 +294,7 @@ def MultiSearch(request):
                 "pre_tags": "<font color='red'>",
                 "post_tags": "</font>",
             },
-            "track_total_hits": 1000
+            "track_total_hits": 200
 
         }
     else:
@@ -313,11 +313,11 @@ def MultiSearch(request):
                 "pre_tags": "<font color='red'>",
                 "post_tags": "</font>",
             },
-            "track_total_hits": 1000
+            "track_total_hits": 200
 
         }
     # print(body)
-    res = es.search(index="new_works", body=body, size=1000)
+    res = es.search(index="new_works", body=body, size=200)
     res = res['hits']
     return JsonResponse(res, safe=False)
 
@@ -386,7 +386,7 @@ def FuzzySearch(request):
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
                 },
-                "track_total_hits": 1000
+                "track_total_hits": 200
 
             }
         else:
@@ -417,7 +417,7 @@ def FuzzySearch(request):
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
                 },
-                "track_total_hits": 1000
+                "track_total_hits": 200
 
             }
     else:
@@ -462,7 +462,7 @@ def FuzzySearch(request):
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
                 },
-                "track_total_hits": 1000
+                "track_total_hits": 200
             }
         else:
 
@@ -486,11 +486,11 @@ def FuzzySearch(request):
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
                 },
-                "track_total_hits": 1000
+                "track_total_hits": 200
 
             }
     # print(body)
-    res = es.search(index="new_works", body=body, size=1000)
+    res = es.search(index="new_works", body=body, size=200)
     res = res['hits']
 
     return JsonResponse(res, safe=False)
@@ -532,7 +532,7 @@ def AuthorSearch(request):
                 "pre_tags": "<font color='red'>",
                 "post_tags": "</font>",
             },
-            "track_total_hits": 1000
+            "track_total_hits": 200
 
         }
     else:
@@ -557,7 +557,7 @@ def AuthorSearch(request):
 
         }
     # print(body)
-    res = es.search(index="authors", body=body, size=1000)
+    res = es.search(index="authors", body=body, size=200)
     res = res['hits']
 
     return JsonResponse(res, safe=False)
@@ -630,7 +630,7 @@ def AuthorFuzzySearch(request):
 
         }
     # print(body)
-    res = es.search(index="authors", body=body, size=1000)
+    res = es.search(index="authors", body=body, size=200)
     res = res['hits']
 
     return JsonResponse(res, safe=False)
