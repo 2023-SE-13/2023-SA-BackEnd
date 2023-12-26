@@ -20,4 +20,6 @@ urlpatterns = [
     path('get_self_information',get_self_information),
     path('change_user_password', change_user_password),
     path('authentication', authentication),
+    path('get_specific_information', get_specific_information),
+
 ]

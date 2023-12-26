@@ -51,13 +51,15 @@ def show_paper_message(request):
                 'work_id': message.work_id,
                 'send_user': message.send_user.username,  # 假设你想返回发送用户的用户名
                 'send_user_id': message.send_user.id,
-                'author_id': Author_User.objects.get(user=message.send_user).author_id
+                'author_id': Author_User.objects.get(user=message.send_user).author_id,
+                'datetime' : localtime(message.created_at).strftime('%Y-%m-%d %H:%M')
             } for message in messages]
             result = {'result': 0, 'messages': messages_list}
             return JsonResponse(result)
         else:
             result = {'result': 1, 'messages': "无权限查看"}
             return JsonResponse(result)
+
 
 
 @api_view(['POST'])

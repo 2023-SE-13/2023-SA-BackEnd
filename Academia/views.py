@@ -52,6 +52,11 @@ def reconstruct_text(inverted_index):
     return reconstructed_txt
 
 
+def ReturnData(request):
+    return_data = json.loads(request.body.decode('utf-8'))
+    return JsonResponse(return_data, safe=False)
+
+
 def BasicSearch(request):
     search_data = json.loads(request.body.decode('utf-8'))
     # page = search_data.get('page')
@@ -114,7 +119,7 @@ def BasicSearch(request):
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
                 },
-                "track_total_hits": 1000
+                "track_total_hits": 200
             }
         else:
             body = {
@@ -143,7 +148,7 @@ def BasicSearch(request):
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
                 },
-                "track_total_hits": 1000
+                "track_total_hits": 200
             }
     else:
         if "." in search_field:
@@ -184,7 +189,7 @@ def BasicSearch(request):
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
                 },
-                "track_total_hits": 1000
+                "track_total_hits": 200
             }
         else:
             body = {
@@ -193,8 +198,8 @@ def BasicSearch(request):
                         search_field: search_content
                     }
                 },
-                # "from": (page - 1) * size,
-                # "size": size,
+                # "from":99,
+                # "size": 10,
                 "_source": {
                     "includes": includes
                 },
@@ -205,10 +210,10 @@ def BasicSearch(request):
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
                 },
-                "track_total_hits": 1000
+                "track_total_hits": 200
             }
     print(body)
-    res = es.search(index="works", body=body, size=1000)
+    res = es.search(index="new_works", body=body, size=200)
     res = res['hits']
     return JsonResponse(res, safe=False)
 
@@ -289,7 +294,7 @@ def MultiSearch(request):
                 "pre_tags": "<font color='red'>",
                 "post_tags": "</font>",
             },
-            "track_total_hits": 1000
+            "track_total_hits": 200
 
         }
     else:
@@ -308,11 +313,11 @@ def MultiSearch(request):
                 "pre_tags": "<font color='red'>",
                 "post_tags": "</font>",
             },
-            "track_total_hits": 1000
+            "track_total_hits": 200
 
         }
     # print(body)
-    res = es.search(index="works", body=body, size=1000)
+    res = es.search(index="new_works", body=body, size=200)
     res = res['hits']
     return JsonResponse(res, safe=False)
 
@@ -381,7 +386,7 @@ def FuzzySearch(request):
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
                 },
-                "track_total_hits": 1000
+                "track_total_hits": 200
 
             }
         else:
@@ -412,7 +417,7 @@ def FuzzySearch(request):
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
                 },
-                "track_total_hits": 1000
+                "track_total_hits": 200
 
             }
     else:
@@ -445,6 +450,8 @@ def FuzzySearch(request):
                         ]
                     }
                 },
+                # "from": 0,
+                # "size": 10,
                 "_source": {
                     "includes": includes
                 },
@@ -455,7 +462,7 @@ def FuzzySearch(request):
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
                 },
-                "track_total_hits": 1000
+                "track_total_hits": 200
             }
         else:
 
@@ -479,11 +486,11 @@ def FuzzySearch(request):
                     "pre_tags": "<font color='red'>",
                     "post_tags": "</font>",
                 },
-                "track_total_hits": 1000
+                "track_total_hits": 200
 
             }
     # print(body)
-    res = es.search(index="works", body=body, size=1000)
+    res = es.search(index="new_works", body=body, size=200)
     res = res['hits']
 
     return JsonResponse(res, safe=False)
@@ -525,7 +532,7 @@ def AuthorSearch(request):
                 "pre_tags": "<font color='red'>",
                 "post_tags": "</font>",
             },
-            "track_total_hits": 1000
+            "track_total_hits": 200
 
         }
     else:
@@ -546,11 +553,12 @@ def AuthorSearch(request):
                 },
                 "pre_tags": "<font color='red'>",
                 "post_tags": "</font>",
-            }
+            },
+            "track_total_hits": 200
 
         }
     # print(body)
-    res = es.search(index="authors", body=body, size=1000)
+    res = es.search(index="authors", body=body, size=200)
     res = res['hits']
 
     return JsonResponse(res, safe=False)
@@ -595,7 +603,8 @@ def AuthorFuzzySearch(request):
                 },
                 "pre_tags": "<font color='red'>",
                 "post_tags": "</font>",
-            }
+            },
+            "track_total_hits": 200
 
         }
     else:
@@ -619,11 +628,12 @@ def AuthorFuzzySearch(request):
                 },
                 "pre_tags": "<font color='red'>",
                 "post_tags": "</font>",
-            }
+            },
+            "track_total_hits": 200
 
         }
     # print(body)
-    res = es.search(index="authors", body=body, size=1000)
+    res = es.search(index="authors", body=body, size=200)
     res = res['hits']
 
     return JsonResponse(res, safe=False)
@@ -639,7 +649,7 @@ def GetPaperByID(request):
             }
         }
     }
-    res = es.search(index="works", body=body)['hits']['hits']
+    res = es.search(index="new_works", body=body)['hits']['hits']
 
     if res:
         res = res[0]
@@ -671,7 +681,7 @@ def GetPaperByID(request):
                     }
                 }
                 # print(body2)
-                res2 = es.search(index="works", body=body2)['hits']['hits']
+                res2 = es.search(index="new_works", body=body2)['hits']['hits']
                 # print(res2)
                 if res2:
                     res2 = res2[0]
@@ -701,7 +711,7 @@ def GetPaperByID(request):
                     }
                 }
                 # print(body2)
-                res3 = es.search(index="works", body=body3)['hits']['hits']
+                res3 = es.search(index="new_works", body=body3)['hits']['hits']
                 # print(res2)
                 if res3:
                     res3 = res3[0]
@@ -739,6 +749,32 @@ def GetAuthorByID(request):
             res['is_applied'] = False
     return JsonResponse(res, safe=False)
 
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def store_body(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        body = data.get('body')
+        if Body_User.objects.filter(user=request.user).exists():
+            Body_User.objects.update(body=body)
+        else:
+            Body_User.objects.create(user=request.user, body=body)
+    result = {'result': 0, 'message': '存储成功'}
+    return JsonResponse(result)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_body(request):
+    if request.method == 'GET':
+        try:
+            body = Body_User.objects.get(user=request.user).Body
+
+            return JsonResponse(body)
+        except:
+            result = {'result': 1, 'message': r'获取失败'}
+            return JsonResponse(result)
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
@@ -748,20 +784,20 @@ def favorite_paper(request):
         # 获取被关注的学者的ID
         paper_id = request.POST.get('paper_id')
         paper_name = request.POST.get('article_name')
-        response = es.get(index="works", id=paper_id)
+        response = es.get(index="new_works", id=paper_id)
 
         current_favorites_count = response['_source'].get('collected_num', 0)
         print(current_favorites_count)
         new_favorites_count = current_favorites_count + 1
         es.update(
-            index="works",
+            index="new_works",
             id=paper_id,
             body={
                 "doc": {"collected_num": new_favorites_count},
                 "doc_as_upsert": True
             }
         )
-        updated_response = es.get(index="works", id=paper_id)
+        updated_response = es.get(index="new_works", id=paper_id)
         updated_response = json.dumps(updated_response)
         print(updated_response)
 
@@ -773,8 +809,6 @@ def favorite_paper(request):
         # 创建关注关系
 
         Favorite.objects.create(user=request.user, article_id=paper_id, article_name=paper_name)
-
-
 
         result = {'result': 0, 'message': r'收藏成功'}
         return JsonResponse(result)

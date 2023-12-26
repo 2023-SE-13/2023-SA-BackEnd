@@ -21,7 +21,7 @@ class ApplyBeAuthor(models.Model):
 class ApplyWork(models.Model):
     work_id = models.CharField('成果id', max_length=40)
     send_user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='发送用户', default='')
-    created_at = models.DateTimeField('创建时间', auto_now_add=True,null=True)
+    created_at = models.DateTimeField('创建时间', auto_now_add=True, null=True)
 
 
 

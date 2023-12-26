@@ -10,9 +10,11 @@ urlpatterns = [
     path('fuzzysearch', FuzzySearch),
     path('authorsearch', AuthorSearch),
     path('authorfuzzysearch', AuthorFuzzySearch),
+    path('get_body', get_body),
+    path('store_body', store_body),
     path('get_paper', GetPaperByID),
     path('get_author', GetAuthorByID),
     path('favorite_paper', favorite_paper),
     path('show_favorites', show_favorites),
-    
+    path('return_data', ReturnData),
 ]
