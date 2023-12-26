@@ -13,7 +13,7 @@ class User(AbstractUser):
     is_author = models.BooleanField('是否为学者', default=False)
     is_authentication = models.BooleanField('是否实名认证', default=False)
     institution = models.CharField('机构', max_length=128, default='')
-    photo_url_out = models.CharField('用户头像外部路径', max_length=128, default='')
+    photo_url_out = models.CharField('用户头像外部路径', max_length=255, default='http://116.63.49.180/avatar/default_avatar.png')
     true_name = models.CharField('真实姓名', max_length=128, default='')
     groups = models.ManyToManyField(
         'auth.Group',
