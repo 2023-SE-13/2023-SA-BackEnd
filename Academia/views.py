@@ -198,8 +198,8 @@ def BasicSearch(request):
                         search_field: search_content
                     }
                 },
-                # "from": (page - 1) * size,
-                # "size": size,
+                # "from":99,
+                # "size": 10,
                 "_source": {
                     "includes": includes
                 },
@@ -450,6 +450,8 @@ def FuzzySearch(request):
                         ]
                     }
                 },
+                # "from": 0,
+                # "size": 10,
                 "_source": {
                     "includes": includes
                 },

@@ -14,7 +14,7 @@ from user.models import User, Author_User
 @api_view(['GET'])
 def show_hot(request):
     if request.method == 'GET':
-        works = Work_Data.objects.all().order_by('-browse_times')
+        works = Work_Data.objects.order_by('-browse_times')[:10]
 
         # 创建一个列表来保存每条记录的相关信息
         works_list = [{
