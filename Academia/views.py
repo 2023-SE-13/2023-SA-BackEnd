@@ -553,7 +553,8 @@ def AuthorSearch(request):
                 },
                 "pre_tags": "<font color='red'>",
                 "post_tags": "</font>",
-            }
+            },
+            "track_total_hits": 200
 
         }
     # print(body)
@@ -602,7 +603,8 @@ def AuthorFuzzySearch(request):
                 },
                 "pre_tags": "<font color='red'>",
                 "post_tags": "</font>",
-            }
+            },
+            "track_total_hits": 200
 
         }
     else:
@@ -626,7 +628,8 @@ def AuthorFuzzySearch(request):
                 },
                 "pre_tags": "<font color='red'>",
                 "post_tags": "</font>",
-            }
+            },
+            "track_total_hits": 200
 
         }
     # print(body)
