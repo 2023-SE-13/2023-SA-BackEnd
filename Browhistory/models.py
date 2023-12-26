@@ -5,6 +5,6 @@ from user.models import User
 class BrowHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,to_field='id')
     time = models.DateTimeField(auto_now_add=True)
-    work_id = models.CharField('work_id', max_length=40)
-    work_name = models.CharField('work_name', max_length=40)
+    work_id = models.CharField('work_id', max_length=255)
+    work_name = models.CharField('work_name', max_length=255)
 
