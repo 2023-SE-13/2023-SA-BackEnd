@@ -791,7 +791,8 @@ def favorite_paper(request):
 
         # 检查用户是否已经收藏了该文章
         if Favorite.objects.filter(user=request.user, article_id=paper_id).exists():
-            result = {'result': 1, 'message': r'您已经收藏了该文章'}
+            result = {'result': 1, 'message': r'您已经收藏了该文章',
+                      'collected_num': response['_source'].get('collected_num', 0)}
             return JsonResponse(result)
 
         # 创建关注关系
@@ -806,10 +807,10 @@ def favorite_paper(request):
                 "doc_as_upsert": True
             }
         )
-        result = {'result': 0, 'message': r'收藏成功'}
+        result = {'result': 0, 'message': r'收藏成功', 'collected_num': new_favorites_count}
         return JsonResponse(result)
     else:
-        result = {'result': 1, 'message': r'无效的请求'}
+        result = {'result': 1, 'message': r'无效的请求', 'collected_num': 0}
         return JsonResponse(result)
 
 
