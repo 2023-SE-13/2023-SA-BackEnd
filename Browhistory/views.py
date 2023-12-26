@@ -44,25 +44,32 @@ def add_brow_history(request):
 def get_work_list(request):
     user = request.user
     try:
+        # 查询当前用户的浏览历史记录
         brow_history_list = BrowHistory.objects.filter(user=user)
-        ids = [brow_history.id for brow_history in brow_history_list]
-        work_names = [brow_history.work_name for brow_history in brow_history_list]
-        work_ids = [brow_history.work_id for brow_history in brow_history_list]
-        times = [localtime(brow_history.time) for brow_history in brow_history_list]
+
+        # 构建objects数组，每个浏览历史对象都转换为字典
+        objects = [{
+            'id': brow_history.id,
+            'work_name': brow_history.work_name,
+            'work_id': brow_history.work_id,
+            'time': localtime(brow_history.time).strftime('%Y-%m-%d %H:%M:%S')  # 格式化时间
+        } for brow_history in brow_history_list]
+
+        # 将构建的objects列表附加到响应数据中
         response_data = {
             'status': 'success',
-            'id': ids,
-            'work_name': work_names,
-            'work_id': work_ids,
-            'time': times,
+            'objects': objects,
             'result': 0,
         }
+
     except BrowHistory.DoesNotExist:
+        # 如果没有找到BrowHistory，则返回错误状态和信息
         response_data = {
             'status': 'error',
             'message': 'No BrowHistory found for the given user_id.'
         }
 
+    # 返回JSON响应
     return JsonResponse(response_data)
 
 @api_view(['DELETE'])
