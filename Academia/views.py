@@ -795,7 +795,6 @@ def favorite_paper(request):
             return JsonResponse(result)
 
         # 创建关注关系
-
         Favorite.objects.create(user=request.user, article_id=paper_id, article_name=paper_name)
         current_favorites_count = response['_source'].get('collected_num', 0)
         new_favorites_count = current_favorites_count + 1
