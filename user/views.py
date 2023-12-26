@@ -150,7 +150,7 @@ def apply_author(request):
 
                 # 更新用户的头像路径
                 message.photo = avatar_path
-                message.photo_out = 'https://sa.leonardsaikou.top/messagetoAdmin/' + f'{message.id}_message.png'
+                message.photo_out = 'http://116.63.49.180/messagetoAdmin/' + f'{message.id}_message.png'
                 message.save()
                 result = {'result': 0, 'report': r'成功提交申请'}
                 return JsonResponse(result)
@@ -245,7 +245,7 @@ def upload_avatar(request):
 
         # 更新用户的头像路径
         user.photo_url = avatar_path
-        user.photo_url_out = 'https://sa.leonardsaikou.top/avatar/' + f'{user.id}_avatar.png'
+        user.photo_url_out = 'http://116.63.49.180/avatar/' + f'{user.id}_avatar.png'
         user.save()
         result = {'result': 0, 'report': r'上传成功'}
         return JsonResponse(result)
