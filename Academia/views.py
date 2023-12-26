@@ -749,6 +749,7 @@ def GetAuthorByID(request):
             res['is_applied'] = False
     return JsonResponse(res, safe=False)
 
+
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -763,6 +764,7 @@ def store_body(request):
     result = {'result': 0, 'message': '存储成功'}
     return JsonResponse(result)
 
+
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -776,6 +778,7 @@ def get_body(request):
             result = {'result': 1, 'message': r'获取失败'}
             return JsonResponse(result)
 
+
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -786,8 +789,15 @@ def favorite_paper(request):
         paper_name = request.POST.get('article_name')
         response = es.get(index="new_works", id=paper_id)
 
+        # 检查用户是否已经收藏了该文章
+        if Favorite.objects.filter(user=request.user, article_id=paper_id).exists():
+            result = {'result': 1, 'message': r'您已经收藏了该文章'}
+            return JsonResponse(result)
+
+        # 创建关注关系
+
+        Favorite.objects.create(user=request.user, article_id=paper_id, article_name=paper_name)
         current_favorites_count = response['_source'].get('collected_num', 0)
-        print(current_favorites_count)
         new_favorites_count = current_favorites_count + 1
         es.update(
             index="new_works",
@@ -797,19 +807,6 @@ def favorite_paper(request):
                 "doc_as_upsert": True
             }
         )
-        updated_response = es.get(index="new_works", id=paper_id)
-        updated_response = json.dumps(updated_response)
-        print(updated_response)
-
-        # 检查用户是否已经收藏了该文章
-        if Favorite.objects.filter(user=request.user, article_id=paper_id).exists():
-            result = {'result': 1, 'message': r'您已经收藏了该文章'}
-            return JsonResponse(result)
-
-        # 创建关注关系
-
-        Favorite.objects.create(user=request.user, article_id=paper_id, article_name=paper_name)
-
         result = {'result': 0, 'message': r'收藏成功'}
         return JsonResponse(result)
     else:
